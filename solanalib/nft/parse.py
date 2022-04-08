@@ -1,14 +1,17 @@
+import base58
+from solanalib.constants import MagicEden
 from solanalib.logger import logger
 from solanalib.nft.models import (
-    Transaction,
     Activity,
+    CancelListingActivity,
+    ListingActivity,
     MintActivity,
     SaleActivity,
-    ListingActivity,
+    Transaction,
     TransferActivity,
-    CancelListingActivity,
 )
-from solanalib.constants import MagicEden
+import numpy as np
+import struct
 
 # Transaction types to check
 # - Listing
@@ -82,18 +85,18 @@ def check_listing(tx: Transaction, mint: str):
     return None
 
 
+def to_little_endian_from_hex(val):
+    little_hex = bytearray.fromhex(val)
+    little_hex.reverse()
+    str_little = "".join(format(x, "02x") for x in little_hex)
+    return str_little
+
+
 def get_me_listing_price_from_data(data):
-    # const priceHex = bs58
-    #     .decode(instructionData)
-    #     .toString("hex")
-    #     .substring(16, 34);
-    # // console.log("Decode Instruction Data:", priceHex);
-    # const sol =
-    #     parseInt(Buffer.from(priceHex, "hex").readUIntLE(0, 8).toString(), 10) /
-    #     LAMPORTS_PER_SOL;
-    # // console.log("Instruction Data Price:", sol);
-    # return sol;
-    return 0
+    price_hex = base58.b58decode(data).hex()[16:24]
+    price_little_endian = to_little_endian_from_hex(price_hex)
+    price_lamports = int(price_little_endian, 16)
+    return price_lamports
 
 
 def check_delisting_or_sale(tx: Transaction, mint: str):
@@ -108,10 +111,10 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
                     sol_transfered_by.append(iix["parsed"]["info"]["source"])
 
                 if (
-                    (iix["parsed"]["type"] == "setAuthority")
-                    & (iix["parsed"]["info"]["authorityType"] == "accountOwner")
-                    & (iix["parsed"]["info"]["authority"] == MagicEden.AUTHORITY)
-                    & (iix["program"] == "spl-token")
+                    iix["parsed"]["type"] == "setAuthority"
+                    and iix["parsed"]["info"]["authorityType"] == "accountOwner"
+                    and iix["parsed"]["info"]["authority"] == MagicEden.AUTHORITY
+                    and iix["program"] == "spl-token"
                 ):
                     me_authority_transfered = True
                     new_authority = iix["parsed"]["info"]["newAuthority"]
@@ -129,7 +132,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
                 mint=mint,
                 new_authority=new_authority,
             )
-        if (sol_transfered_by) & (new_authority in sol_transfered_by):
+        if (sol_transfered_by) and (new_authority in sol_transfered_by):
             logger.debug("Is Sale tx")
             if instruction_data:
                 sale_price = get_me_listing_price_from_data(instruction_data)
@@ -139,7 +142,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
                 slot=tx.slot,
                 mint=mint,
                 new_authority=new_authority,
-                sale_price=sale_price,
+                price_lamports=sale_price,
             )
         logger.debug("ME Authority transfers, but unknown tx")
     return None
@@ -170,21 +173,23 @@ def check_transfer(tx: Transaction, mint: str):
     transfered_check = False
     for ix in tx.instructions.outer:
         if (
-            (ix["parsed"]["type"] == "initializeAccount")
-            & (ix["program"] == "spl-token")
-            & (ix["parsed"]["info"]["mint"] == mint)
+            ix["parsed"]["type"] == "initializeAccount"
+            and ix["program"] == "spl-token"
+            and ix["parsed"]["info"]["mint"] == mint
         ):
             new_token_account = ix["parsed"]["info"]["account"]
 
-        if (ix["parsed"]["type"] in ["transferChecked", "transfer"]) & (
-            ix["program"] == "spl-token"
+        if (
+            ix["parsed"]["type"] in ["transferChecked", "transfer"]
+            and ix["program"] == "spl-token"
         ):
-            if (ix["parsed"]["info"]["mint"] == mint) & (
-                ix["parsed"]["info"]["tokenAmount"]["uiAmountString"] == "1"
+            if (
+                ix["parsed"]["info"]["mint"] == mint
+                and ix["parsed"]["info"]["tokenAmount"]["uiAmountString"] == "1"
             ) or (
-                new_token_account & new_token_account
-                == ix["parsed"]["info"]["destination"] & ix["parsed"]["info"]["amount"]
-                == "1"
+                new_token_account
+                and new_token_account == ix["parsed"]["info"]["destination"]
+                and ix["parsed"]["info"]["amount"] == "1"
             ):
                 transfered_check = True
                 new_authority = ix["parsed"]["info"]["authority"]
