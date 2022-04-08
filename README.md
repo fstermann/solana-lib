@@ -1,4 +1,6 @@
-# solana-rpc
+# Solana Lib
+
+A basic library focused on fetching data from the Solana blockchain.
 
 
 ### Current Workflow to get NFTs
