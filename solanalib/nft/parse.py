@@ -149,17 +149,17 @@ def check_mint(tx: Transaction, mint: str):
     for ix in tx.instructions.outer:
         if ix["parsed"]["type"] == "mintTo":
             logger.debug("Has mintTo")
-            logger.debug(f"Mint in tx {ix['parsed']['mint']}")
+            logger.debug(f"Mint in tx {ix['parsed']['info']['mint']}")
             logger.debug(f"Target mint {mint}")
-            logger.debug(ix["parsed"])
             if ix["parsed"]["info"]["mint"] == mint:
                 logger.debug("Is mint tx")
+
                 return MintActivity(
                     transaction_id=tx.transaction_id,
                     block_time=tx.block_time,
                     slot=tx.slot,
                     mint=mint,
-                    mint_authority=ix["parsed"]["mintAuthority"],
+                    mint_authority=ix["parsed"]["info"]["mintAuthority"],
                 )
     return None
     # if Metaplex.CANDY_MACHINE_V2 in program_ids:

@@ -9,12 +9,16 @@ class Instructions(BaseModel):
     inner: Dict[int, SafeDict]
 
     def __init__(self, transaction: dict):
-        self.outer = [
-            SafeDict(ix) for ix in transaction["transaction"]["message"]["instructions"]
-        ]
-        self.inner = {
-            ix["index"]: SafeDict(ix) for ix in transaction["meta"]["innerInstructions"]
-        }
+        super().__init__(
+            outer=[
+                SafeDict(ix)
+                for ix in transaction["transaction"]["message"]["instructions"]
+            ],
+            inner={
+                ix["index"]: SafeDict(ix)
+                for ix in transaction["meta"]["innerInstructions"]
+            },
+        )
 
 
 class Transaction(BaseModel):
@@ -24,10 +28,12 @@ class Transaction(BaseModel):
     instructions: Instructions
 
     def __init__(self, transaction: dict):
-        self.transaction_id = (transaction["transaction"]["signatures"][0],)
-        self.block_time = (transaction["blockTime"],)
-        self.slot = (transaction["slot"],)
-        self.instructions = Instructions(transaction)
+        super().__init__(
+            transaction_id=transaction["transaction"]["signatures"][0],
+            block_time=transaction["blockTime"],
+            slot=transaction["slot"],
+            instructions=Instructions(transaction),
+        )
 
 
 class ActivityType(str, Enum):
