@@ -3,7 +3,7 @@
     "result": {
         "blockTime": 1644084265,
         "meta": {
-            "err": None,
+            "err": null,
             "fee": 15000,
             "innerInstructions": [
                 {
@@ -362,7 +362,7 @@
                     "uiTokenAmount": {
                         "amount": "0",
                         "decimals": 0,
-                        "uiAmount": None,
+                        "uiAmount": null,
                         "uiAmountString": "0"
                     }
                 }
@@ -404,7 +404,7 @@
             ],
             "rewards": [],
             "status": {
-                "Ok": None
+                "Ok": null
             }
         },
         "slot": 119485893,
@@ -413,103 +413,103 @@
                 "accountKeys": [
                     {
                         "pubkey": "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ",
-                        "signer": True,
-                        "writable": True
+                        "signer": true,
+                        "writable": true
                     },
                     {
                         "pubkey": "FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC",
-                        "signer": True,
-                        "writable": True
+                        "signer": true,
+                        "writable": true
                     },
                     {
                         "pubkey": "6w6yKAyFTeHvMbn6YvaenAzd8JRaJkZDUvDxdUmYcjYK",
-                        "signer": True,
-                        "writable": False
+                        "signer": true,
+                        "writable": false
                     },
                     {
                         "pubkey": "CpkL4HybWzJFqwHWZRR6kZ6SdK2exE1goQhu3Pt3JQFP",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "Gwe4hWuFkY3ozJe7mcdGCk2s4RNYtqRcL8XakG4QDTBS",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "63xpvnRJEh711zzvo1F8sBUKD2daf3aKjxbTV8BhLSTH",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "351tYbAKpVdSsui1DkuqxxngxCjJTufgCTmKQNfGKEFF",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "87PYEqehWWRPbS4JfqdY8ggzAAuoM35meCMzMScx31j4",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "D6y2Nz8bZ3Mcf6yFJMdW5KPxJY5sPg6A7LJNDaJWZGgD",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "2JqUDmTAGdebvbvjWXgSVq1bj1mDhjhX2q531AmPB9Vk",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "SysvarRent111111111111111111111111111111111",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "11111111111111111111111111111111",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "Ed22DSqn7hdgbGQ7mPDkF3LSge1FX4UxZKDVDwkVDnWz",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "SysvarC1ock11111111111111111111111111111111",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "SysvarRecentB1ockHashes11111111111111111111",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "Sysvar1nstructions1111111111111111111111111",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     }
                 ],
                 "instructions": [

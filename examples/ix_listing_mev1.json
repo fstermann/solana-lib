@@ -3,7 +3,7 @@
     "result": {
         "blockTime": 1644150394,
         "meta": {
-            "err": None,
+            "err": null,
             "fee": 5000,
             "innerInstructions": [
                 {
@@ -94,7 +94,7 @@
             ],
             "rewards": [],
             "status": {
-                "Ok": None
+                "Ok": null
             }
         },
         "slot": 119605267,
@@ -103,33 +103,33 @@
                 "accountKeys": [
                     {
                         "pubkey": "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ",
-                        "signer": True,
-                        "writable": True
+                        "signer": true,
+                        "writable": true
                     },
                     {
                         "pubkey": "CpkL4HybWzJFqwHWZRR6kZ6SdK2exE1goQhu3Pt3JQFP",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "bx2ujrWRx3HcPbQCL1qzmLxVtXNpM6ynMc7FSqARB4P",
-                        "signer": False,
-                        "writable": True
+                        "signer": false,
+                        "writable": true
                     },
                     {
                         "pubkey": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "11111111111111111111111111111111",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     },
                     {
                         "pubkey": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
-                        "signer": False,
-                        "writable": False
+                        "signer": false,
+                        "writable": false
                     }
                 ],
                 "instructions": [
