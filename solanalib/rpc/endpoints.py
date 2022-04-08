@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Endpoint(Enum):
+class Endpoint(str, Enum):
     DEFAULT = "https://rpc.theindex.io"
     MAINNET_BETA = "https://api.mainnet-beta.solana.com"
     GENESYS_GO = "https://ssc-dao.genesysgo.net"
@@ -9,5 +9,5 @@ class Endpoint(Enum):
     THE_INDEX = "https://rpc.theindex.io"
 
     @property
-    def url(self):
+    def url(self) -> str:
         return self.value
