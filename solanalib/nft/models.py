@@ -6,7 +6,7 @@ from solanalib.util import SafeDict
 
 class Instructions(BaseModel):
     outer: List[SafeDict]
-    inner: Dict[int, SafeDict]
+    inner: Dict[int, List[SafeDict]]
 
     def __init__(self, transaction: dict):
         super().__init__(
@@ -15,7 +15,7 @@ class Instructions(BaseModel):
                 for ix in transaction["transaction"]["message"]["instructions"]
             ],
             inner={
-                ix["index"]: SafeDict(ix)
+                ix["index"]: [SafeDict(iix) for iix in ix["instructions"]]
                 for ix in transaction["meta"]["innerInstructions"]
             },
         )
