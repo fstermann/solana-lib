@@ -10,7 +10,11 @@ from solanalib.nft.models import (
 )
 from solanalib.constants import MagicEden
 
-
+# Transaction types to check
+# - Listing
+# - Cancel Listing or Sale
+# - Mint
+# - Transfer
 def parse_transaction(transaction: dict, mint: str) -> Activity:
     logger.debug("Check if Transaction is Listing")
 
