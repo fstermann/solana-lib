@@ -53,16 +53,16 @@ def check_listing(tx: Transaction, mint: str):
             logger.debug("Is MagicEdenV1")
             for iix in tx.instructions.inner[index]:
                 if (
-                    (iix["parsed"]["type"] == "createAccount")
-                    & (iix["parsed"]["info"]["owner"] == MagicEden.PROGRAM_V1)
-                    & (iix["program"] == "system")
+                    iix["parsed"]["type"] == "createAccount"
+                    and iix["parsed"]["info"]["owner"] == MagicEden.PROGRAM_V1
+                    and iix["program"] == "system"
                 ):
                     me_program_check = True
                 if (
-                    (iix["parsed"]["type"] == "setAuthority")
-                    & (iix["parsed"]["info"]["authorityType"] == "accountOwner")
-                    & (iix["parsed"]["info"]["newAuthority"] == MagicEden.AUTHORITY)
-                    & (iix["program"] == "spl-token")
+                    iix["parsed"]["type"] == "setAuthority"
+                    and iix["parsed"]["info"]["authorityType"] == "accountOwner"
+                    and iix["parsed"]["info"]["newAuthority"] == MagicEden.AUTHORITY
+                    and iix["program"] == "spl-token"
                 ):
                     me_authority_check = True
                     listing_authority = iix["parsed"]["info"]["authority"]
