@@ -59,12 +59,19 @@ class TestParse:
         assert activity.new_authority == "3H3xcs9xwcqaSJm1EV9Mw9ooKqNCVuYTCntzxhdmuLez"
         assert activity.price_lamports == 1750000000
 
-    # def test_parse_transfer_mev1(self):
-    #     tx = self.load_example_tx("tx_transfer")
-    #     mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
-    #     activity = check_transfer(tx=tx, mint=mint)
-    #     assert isinstance(activity, TransferActivity)
-    #     assert activity.mint == mint
+    def test_parse_transfer(self):
+        tx = self.load_example_tx("tx_transfer_v1")
+        mint = "2cQaPyqMaRhU4d9kASVtehNnBYekisjVVf3oTKao3K9E"
+        activity = check_transfer(tx=tx, mint=mint)
+        assert isinstance(activity, TransferActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "3Z9zoXZPS4NnFkzrMAY6a5KdzfMcRPkrtmNJbtWz2wFU"
+        assert (
+            activity.new_token_account == "B9U6Ftt4Vqg9f6xvXg1PD3sfc84t776eG6Upxo8dxDPJ"
+        )
+        assert (
+            activity.old_token_account == "B9U6Ftt4Vqg9f6xvXg1PD3sfc84t776eG6Upxo8dxDPJ"
+        )
 
     #     tx = self.load_example_tx("tx_transfer2")
     #     mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
