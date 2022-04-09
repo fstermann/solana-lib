@@ -1,4 +1,5 @@
 import json
+from solanalib.constants import Marketplace
 
 from solanalib.nft.models import (
     DelistingActivity,
@@ -33,6 +34,19 @@ class TestParse:
         assert (
             activity.listing_authority == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
         )
+        assert activity.marketplace == Marketplace.MAGIC_EDEN_V1
+
+    def test_parse_listing_mev2(self):
+        tx = self.load_example_tx("tx_listing_mev2")
+        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+        activity = check_listing(tx=tx, mint=mint)
+        assert isinstance(activity, ListingActivity)
+        assert activity.mint == mint
+        assert activity.price_lamports == 7490000000
+        assert (
+            activity.listing_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
+        )
+        assert activity.marketplace == Marketplace.MAGIC_EDEN_V2
 
     def test_parse_delisting_mev1(self):
         tx = self.load_example_tx("tx_delisting_mev1")
