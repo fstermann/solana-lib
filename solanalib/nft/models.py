@@ -1,6 +1,8 @@
-from pydantic import BaseModel
 from enum import Enum
-from typing import List, Dict
+from typing import Dict, List
+
+from pydantic import BaseModel
+from solanalib.constants import Marketplace
 from solanalib.util import SafeDict
 
 
@@ -154,6 +156,7 @@ class MintActivity(Activity):
 class ListingActivity(Activity):
     listing_authority: str
     price_lamports: int
+    marketplace: Marketplace
 
     type_: ActivityType = ActivityType.LISTING
 
