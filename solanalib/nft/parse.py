@@ -1,5 +1,7 @@
+from typing import Union
+
 import base58
-from solanalib.constants import MagicEden, Marketplace
+from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
 from solanalib.nft.models import (
     Activity,
@@ -10,8 +12,7 @@ from solanalib.nft.models import (
     Transaction,
     TransferActivity,
 )
-import numpy as np
-import struct
+
 
 # Transaction types to check
 # - Listing
@@ -47,45 +48,29 @@ def parse_transaction(transaction: dict, mint: str) -> Activity:
     # else case
 
 
-def check_listing(tx: Transaction, mint: str):
+def check_listing_me(
+    magic_eden: Union[MagicEdenV1, MagicEdenV2], tx: Transaction, mint: str
+) -> Union[ListingActivity, None]:
     me_program_check = False
     me_authority_check = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program_id(MagicEden.PROGRAM_V1):
-            logger.debug("Is MagicEdenV1")
+        if ix.is_program_id(magic_eden.PROGRAM):
+            logger.debug(f"Is program {magic_eden.NAME}")
 
             for iix in tx.instructions.inner[index]:
-                if iix.is_create_account_by_program(MagicEden.PROGRAM_V1):
+                if iix.is_create_account_by_program(magic_eden.PROGRAM):
                     me_program_check = True
                 if iix.is_set_authority() and iix.is_new_authority(
-                    MagicEden.AUTHORITY_V1
+                    magic_eden.AUTHORITY
                 ):
                     me_authority_check = True
                     listing_authority = iix.authority
-                    marketplace = Marketplace.MAGIC_EDEN_V1
+                    marketplace = magic_eden.MARKETPLACE
 
                     if ix.has_data():
                         listing_price = get_me_listing_price_from_data(
-                            ix.data, MagicEden.PROGRAM_V1
-                        )
-
-        if ix.is_program_id(MagicEden.PROGRAM_V2):
-            logger.debug("Is MagicEdenV2")
-
-            for iix in tx.instructions.inner[index]:
-                if iix.is_create_account_by_program(MagicEden.PROGRAM_V2):
-                    me_program_check = True
-                if iix.is_set_authority() and iix.is_new_authority(
-                    MagicEden.AUTHORITY_V2
-                ):
-                    me_authority_check = True
-                    listing_authority = iix.authority
-                    marketplace = Marketplace.MAGIC_EDEN_V2
-
-                    if ix.has_data():
-                        listing_price = get_me_listing_price_from_data(
-                            ix.data, MagicEden.PROGRAM_V2
+                            ix.data, magic_eden.PROGRAM
                         )
 
     if me_program_check & me_authority_check:
@@ -102,6 +87,18 @@ def check_listing(tx: Transaction, mint: str):
     return None
 
 
+def check_listing(tx: Transaction, mint: str):
+    activity = check_listing_me(magic_eden=MagicEdenV1, tx=tx, mint=mint)
+    if activity:
+        return activity
+
+    activity = check_listing_me(magic_eden=MagicEdenV2, tx=tx, mint=mint)
+    if activity:
+        return activity
+
+    return None
+
+
 def to_little_endian_from_hex(val):
     little_hex = bytearray.fromhex(val)
     little_hex.reverse()
@@ -112,9 +109,9 @@ def to_little_endian_from_hex(val):
 def get_me_listing_price_from_data(data, program):
     hex_data = base58.b58decode(data).hex()
 
-    if program == MagicEden.PROGRAM_V1:
+    if program == MagicEdenV1.PROGRAM:
         price_hex = hex_data[16:24]
-    elif program == MagicEden.PROGRAM_V2:
+    elif program == MagicEdenV2.PROGRAM:
         price_hex = hex_data[20:30]
     else:
         raise NotImplemented("Unkown program")
@@ -124,18 +121,20 @@ def get_me_listing_price_from_data(data, program):
     return price_lamports
 
 
-def check_delisting_or_sale(tx: Transaction, mint: str):
+def check_delisting_or_sale_me(
+    magic_eden: Union[MagicEdenV1, MagicEdenV2], tx: Transaction, mint: str
+) -> Union[SaleActivity, DelistingActivity, None]:
     sol_transfered_by = []
     me_authority_transfered = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program_id(MagicEden.PROGRAM_V1):
-            logger.debug("Is MagicEdenV1")
+        if ix.is_program_id(magic_eden.PROGRAM):
+            logger.debug(f"Program is {magic_eden.NAME}")
 
             for iix in tx.instructions.inner[index]:
                 if iix.is_type("transfer"):
                     sol_transfered_by.append(iix.source)
-                if iix.is_set_authority() and iix.is_authority(MagicEden.AUTHORITY_V1):
+                if iix.is_set_authority() and iix.is_authority(magic_eden.AUTHORITY):
                     me_authority_transfered = True
                     new_authority = iix.new_authority
 
@@ -143,7 +142,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
                     instruction_data = ix.data
 
     if me_authority_transfered:
-        if MagicEden.CANCEL_LISTING_INSTRUCTION == instruction_data:
+        if magic_eden.CANCEL_LISTING_INSTRUCTION in instruction_data:
             logger.debug("Is Cancel Listing tx")
             return DelistingActivity(
                 transaction_id=tx.transaction_id,
@@ -156,7 +155,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
             logger.debug("Is Sale tx")
             if instruction_data:
                 sale_price = get_me_listing_price_from_data(
-                    instruction_data, MagicEden.PROGRAM_V1
+                    instruction_data, magic_eden.PROGRAM
                 )
             return SaleActivity(
                 transaction_id=tx.transaction_id,
@@ -167,6 +166,18 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
                 price_lamports=sale_price,
             )
         logger.debug("ME Authority transfers, but unknown tx")
+    return None
+
+
+def check_delisting_or_sale(tx: Transaction, mint: str):
+    activity = check_delisting_or_sale_me(magic_eden=MagicEdenV1, tx=tx, mint=mint)
+    if activity:
+        return activity
+
+    activity = check_delisting_or_sale_me(magic_eden=MagicEdenV2, tx=tx, mint=mint)
+    if activity:
+        return activity
+
     return None
 
 
