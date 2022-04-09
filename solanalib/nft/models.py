@@ -29,6 +29,14 @@ class InnerInstruction(SafeDict):
     def authority(self) -> SafeDict:
         return self.info["authority"]
 
+    @property
+    def new_authority(self) -> SafeDict:
+        return self.info["newAuthority"]
+
+    @property
+    def source(self) -> SafeDict:
+        return self.info["source"]
+
     def is_type(self, type_: str) -> bool:
         return self.parsed["type"] == type_
 
@@ -42,13 +50,18 @@ class InnerInstruction(SafeDict):
             and self.is_program("system")
         )
 
-    def is_new_authority(self, authority: str) -> bool:
+    def is_set_authority(self) -> bool:
         return (
             self.is_type("setAuthority")
             and self.info["authorityType"] == "accountOwner"
-            and self.info["newAuthority"] == authority
             and self.is_program("spl-token")
         )
+
+    def is_authority(self, authority: str) -> bool:
+        return self.authority == authority
+
+    def is_new_authority(self, new_authority: str) -> bool:
+        return self.new_authority == new_authority
 
 
 class Instructions(BaseModel):

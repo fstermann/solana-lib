@@ -58,7 +58,7 @@ def check_listing(tx: Transaction, mint: str):
             for iix in tx.instructions.inner[index]:
                 if iix.is_create_account_by_program(MagicEden.PROGRAM_V1):
                     me_program_check = True
-                if iix.is_new_authority(MagicEden.AUTHORITY):
+                if iix.is_set_authority() and iix.is_new_authority(MagicEden.AUTHORITY):
                     me_authority_check = True
                     listing_authority = iix.authority
                     if ix.has_data():
@@ -96,27 +96,18 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
     me_authority_transfered = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        # if ix["programId"] == MagicEden.PROGRAM_V1:
         if ix.is_program(MagicEden.PROGRAM_V1):
             logger.debug("Is MagicEdenV1")
+
             for iix in tx.instructions.inner[index]:
                 if iix.is_type("transfer"):
-                    # if iix["parsed"]["type"] == "transfer":
-                    sol_transfered_by.append(iix["parsed"]["info"]["source"])
-
-                if (
-                    iix.is_type("setAuthority")
-                    # iix["parsed"]["type"] == "setAuthority"
-                    and iix["parsed"]["info"]["authorityType"] == "accountOwner"
-                    and iix["parsed"]["info"]["authority"] == MagicEden.AUTHORITY
-                    and iix.is_program("spl-token")
-                    # and iix["program"] == "spl-token"
-                ):
+                    sol_transfered_by.append(iix.source)
+                if iix.is_set_authority() and iix.is_authority(MagicEden.AUTHORITY):
                     me_authority_transfered = True
-                    new_authority = iix["parsed"]["info"]["newAuthority"]
+                    new_authority = iix.new_authority
 
-                if "data" in ix:
-                    instruction_data = ix["data"]
+                if ix.has_data():
+                    instruction_data = ix.data
 
     if me_authority_transfered:
         if MagicEden.CANCEL_LISTING_INSTRUCTION == instruction_data:
