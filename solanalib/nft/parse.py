@@ -1,5 +1,5 @@
 import base58
-from solanalib.constants import MagicEden
+from solanalib.constants import MagicEden, Marketplace
 from solanalib.logger import logger
 from solanalib.nft.models import (
     Activity,
@@ -58,11 +58,35 @@ def check_listing(tx: Transaction, mint: str):
             for iix in tx.instructions.inner[index]:
                 if iix.is_create_account_by_program(MagicEden.PROGRAM_V1):
                     me_program_check = True
-                if iix.is_set_authority() and iix.is_new_authority(MagicEden.AUTHORITY):
+                if iix.is_set_authority() and iix.is_new_authority(
+                    MagicEden.AUTHORITY_V1
+                ):
                     me_authority_check = True
                     listing_authority = iix.authority
+                    marketplace = Marketplace.MAGIC_EDEN_V1
+
                     if ix.has_data():
-                        listing_price = get_me_listing_price_from_data(ix.data)
+                        listing_price = get_me_listing_price_from_data(
+                            ix.data, MagicEden.PROGRAM_V1
+                        )
+
+        if ix.is_program_id(MagicEden.PROGRAM_V2):
+            logger.debug("Is MagicEdenV2")
+
+            for iix in tx.instructions.inner[index]:
+                if iix.is_create_account_by_program(MagicEden.PROGRAM_V2):
+                    me_program_check = True
+                if iix.is_set_authority() and iix.is_new_authority(
+                    MagicEden.AUTHORITY_V2
+                ):
+                    me_authority_check = True
+                    listing_authority = iix.authority
+                    marketplace = Marketplace.MAGIC_EDEN_V2
+
+                    if ix.has_data():
+                        listing_price = get_me_listing_price_from_data(
+                            ix.data, MagicEden.PROGRAM_V2
+                        )
 
     if me_program_check & me_authority_check:
         logger.debug("Is listing tx")
@@ -73,6 +97,7 @@ def check_listing(tx: Transaction, mint: str):
             mint=mint,
             listing_authority=listing_authority,
             price_lamports=listing_price,
+            marketplace=marketplace,
         )
     return None
 
@@ -84,8 +109,16 @@ def to_little_endian_from_hex(val):
     return str_little
 
 
-def get_me_listing_price_from_data(data):
-    price_hex = base58.b58decode(data).hex()[16:24]
+def get_me_listing_price_from_data(data, program):
+    hex_data = base58.b58decode(data).hex()
+
+    if program == MagicEden.PROGRAM_V1:
+        price_hex = hex_data[16:24]
+    elif program == MagicEden.PROGRAM_V2:
+        price_hex = hex_data[20:30]
+    else:
+        raise NotImplemented("Unkown program")
+
     price_little_endian = to_little_endian_from_hex(price_hex)
     price_lamports = int(price_little_endian, 16)
     return price_lamports
@@ -102,7 +135,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
             for iix in tx.instructions.inner[index]:
                 if iix.is_type("transfer"):
                     sol_transfered_by.append(iix.source)
-                if iix.is_set_authority() and iix.is_authority(MagicEden.AUTHORITY):
+                if iix.is_set_authority() and iix.is_authority(MagicEden.AUTHORITY_V1):
                     me_authority_transfered = True
                     new_authority = iix.new_authority
 
@@ -122,7 +155,9 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
         if (sol_transfered_by) and (new_authority in sol_transfered_by):
             logger.debug("Is Sale tx")
             if instruction_data:
-                sale_price = get_me_listing_price_from_data(instruction_data)
+                sale_price = get_me_listing_price_from_data(
+                    instruction_data, MagicEden.PROGRAM_V1
+                )
             return SaleActivity(
                 transaction_id=tx.transaction_id,
                 block_time=tx.block_time,
