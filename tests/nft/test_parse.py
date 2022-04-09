@@ -59,21 +59,21 @@ class TestParse:
         assert activity.new_authority == "3H3xcs9xwcqaSJm1EV9Mw9ooKqNCVuYTCntzxhdmuLez"
         assert activity.price_lamports == 1750000000
 
-    def test_parse_transfer_mev1(self):
-        tx = self.load_example_tx("tx_transfer")
-        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
-        activity = check_transfer(tx=tx, mint=mint)
-        assert isinstance(activity, TransferActivity)
-        assert activity.mint == mint
+    # def test_parse_transfer_mev1(self):
+    #     tx = self.load_example_tx("tx_transfer")
+    #     mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+    #     activity = check_transfer(tx=tx, mint=mint)
+    #     assert isinstance(activity, TransferActivity)
+    #     assert activity.mint == mint
 
-        tx = self.load_example_tx("tx_transfer2")
-        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
-        activity = check_transfer(tx=tx, mint=mint)
-        assert isinstance(activity, TransferActivity)
-        assert activity.mint == mint
+    #     tx = self.load_example_tx("tx_transfer2")
+    #     mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+    #     activity = check_transfer(tx=tx, mint=mint)
+    #     assert isinstance(activity, TransferActivity)
+    #     assert activity.mint == mint
 
-        tx = self.load_example_tx("tx_transfer3")
-        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
-        activity = check_transfer(tx=tx, mint=mint)
-        assert isinstance(activity, TransferActivity)
-        assert activity.mint == mint
+    #     tx = self.load_example_tx("tx_transfer3")
+    #     mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+    #     activity = check_transfer(tx=tx, mint=mint)
+    #     assert isinstance(activity, TransferActivity)
+    #     assert activity.mint == mint
