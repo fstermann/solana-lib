@@ -67,7 +67,34 @@ metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s is the Metaplex Metadata Token progr
 
 
 
-MagicEden Contracts: 
 
-V1: MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8
-V2: M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K
+## Problems that arrised and my solution
+
+### How to decode unkown instruction data
+
+I wanted to find the listing price for the MEV2 contract from the instruction data.
+    
+    2B3vSpRNKZZWsFek5ah7xe9uickZUbsaBjoqxVQF3Wq8ngW
+
+First, base58 decode the instruction data and convert to hex
+
+    base58.b58decode("2B3vSpRNKZZWsFek5ah7xe9uickZUbsaBjoqxVQF3Wq8ngW").hex()
+    > 33e685a4017f83adfefa805470be010000000100000000000000ffffffffffffffff
+
+I then went to an online hex converter (https://www.scadacore.com/tools/programming-calculators/online-hex-converter/)
+
+- No luck
+
+I looked at the listing price in the program logs
+- listing price was 7490000000
+
+To find out the hex representation, i wen to an online hex and little endian converter (https://www.save-editor.com/tools/wse_hex.html) and got the Hexadecimal number
+
+- 805470BE01
+- Nice! This is in the instruction data
+    - 33e685a4017f83adfefa**805470be01**0000000100000000000000ffffffffffffffff
+
+I then took the same route as the V1 contract, convert this hex to little endian and eventually to int
+
+    price_little_endian = to_little_endian_from_hex("805470be01")
+    price_lamports = int(price_little_endian, 16)
