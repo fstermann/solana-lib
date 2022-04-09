@@ -1,17 +1,27 @@
 from enum import Enum
 
+from pytest import Mark
+
 
 class Marketplace(str, Enum):
     MAGIC_EDEN_V1 = "MagicEdenV1"
     MAGIC_EDEN_V2 = "MagicEdenV2"
 
 
-class MagicEden(str, Enum):
-    PROGRAM_V1 = "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8"
-    PROGRAM_V2 = "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K"
-    AUTHORITY_V1 = "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp"
-    AUTHORITY_V2 = "1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix"
+class MagicEdenV1(str, Enum):
+    NAME = "MagicEdenV1"
+    PROGRAM = "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8"
+    AUTHORITY = "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp"
     CANCEL_LISTING_INSTRUCTION = "TE6axTojnpk"
+    MARKETPLACE = Marketplace.MAGIC_EDEN_V1.value
+
+
+class MagicEdenV2(str, Enum):
+    NAME = "MagicEdenV2"
+    PROGRAM = "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K"
+    AUTHORITY = "1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix"
+    CANCEL_LISTING_INSTRUCTION = "ENwHiaH9NA"
+    MARKETPLACE = Marketplace.MAGIC_EDEN_V2.value
 
 
 class Metaplex(str, Enum):
