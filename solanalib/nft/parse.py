@@ -130,6 +130,7 @@ def check_delisting_or_sale_me(
     for index, ix in enumerate(tx.instructions.outer):
         if ix.is_program_id(magic_eden.PROGRAM):
             logger.debug(f"Program is {magic_eden.NAME}")
+            marketplace = magic_eden.MARKETPLACE
 
             for iix in tx.instructions.inner[index]:
                 if iix.is_type("transfer"):
@@ -150,6 +151,7 @@ def check_delisting_or_sale_me(
                 slot=tx.slot,
                 mint=mint,
                 new_authority=new_authority,
+                marketplace=marketplace,
             )
         if (sol_transfered_by) and (new_authority in sol_transfered_by):
             logger.debug("Is Sale tx")
@@ -164,6 +166,7 @@ def check_delisting_or_sale_me(
                 mint=mint,
                 new_authority=new_authority,
                 price_lamports=sale_price,
+                marketplace=marketplace,
             )
         logger.debug("ME Authority transfers, but unknown tx")
     return None

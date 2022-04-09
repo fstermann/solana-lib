@@ -171,6 +171,7 @@ class TransferActivity(Activity):
 
 class DelistingActivity(Activity):
     new_authority: str
+    marketplace: Marketplace
 
     type_: ActivityType = ActivityType.DELISTING
 
@@ -178,5 +179,6 @@ class DelistingActivity(Activity):
 class SaleActivity(Activity):
     new_authority: str
     price_lamports: int
+    marketplace: Marketplace
 
     type_: ActivityType = ActivityType.SALE
