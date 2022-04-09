@@ -3,7 +3,7 @@ from solanalib.constants import MagicEden
 from solanalib.logger import logger
 from solanalib.nft.models import (
     Activity,
-    CancelListingActivity,
+    DelistingActivity,
     ListingActivity,
     MintActivity,
     SaleActivity,
@@ -125,7 +125,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
     if me_authority_transfered:
         if MagicEden.CANCEL_LISTING_INSTRUCTION == instruction_data:
             logger.debug("Is Cancel Listing tx")
-            return CancelListingActivity(
+            return DelistingActivity(
                 transaction_id=tx.transaction_id,
                 block_time=tx.block_time,
                 slot=tx.slot,
@@ -171,6 +171,7 @@ def check_mint(tx: Transaction, mint: str):
 
 def check_transfer(tx: Transaction, mint: str):
     transfered_check = False
+    new_token_account = None
     for ix in tx.instructions.outer:
         if (
             ix["parsed"]["type"] == "initializeAccount"
@@ -183,6 +184,7 @@ def check_transfer(tx: Transaction, mint: str):
             ix["parsed"]["type"] in ["transferChecked", "transfer"]
             and ix["program"] == "spl-token"
         ):
+            logger.debug("Type is spl-token transfer")
             if (
                 ix["parsed"]["info"]["mint"] == mint
                 and ix["parsed"]["info"]["tokenAmount"]["uiAmountString"] == "1"
