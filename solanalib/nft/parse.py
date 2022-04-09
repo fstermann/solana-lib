@@ -135,6 +135,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
     return None
 
 
+# TODO: Check candy machine
 def check_mint(tx: Transaction, mint: str):
     for ix in tx.instructions.outer:
         if ix.is_mint(mint):
@@ -147,39 +148,31 @@ def check_mint(tx: Transaction, mint: str):
                 mint_authority=ix.info["mintAuthority"],
             )
     return None
-    # if Metaplex.CANDY_MACHINE_V2 in program_ids:
-    #     return True
 
 
+# TODO: Define "transfer" and support multiple cases
 def check_transfer(tx: Transaction, mint: str):
     transfered_check = False
     new_token_account = None
     for ix in tx.instructions.outer:
-        if (
-            ix["parsed"]["type"] == "initializeAccount"
-            and ix["program"] == "spl-token"
-            and ix["parsed"]["info"]["mint"] == mint
-        ):
+        if ix.is_initialize_account_for_mint(mint):
             new_token_account = ix["parsed"]["info"]["account"]
             logger.debug(f"Found new token account {new_token_account}")
 
-        if (
-            ix["parsed"]["type"] in ["transferChecked", "transfer"]
-            and ix["program"] == "spl-token"
-        ):
+        if ix.is_spl_token_transfer():
             logger.debug("Type is spl-token transfer")
             if (
-                ix["parsed"]["info"]["mint"] == mint
-                and ix["parsed"]["info"]["tokenAmount"]["uiAmountString"] == "1"
+                ix.info["mint"] == mint
+                and ix.info["tokenAmount"]["uiAmountString"] == "1"
             ) or (
                 new_token_account
-                and new_token_account == ix["parsed"]["info"]["destination"]
-                and ix["parsed"]["info"]["amount"] == "1"
+                and new_token_account == ix.info["destination"]
+                and ix.info["amount"] == "1"
             ):
                 transfered_check = True
-                new_authority = ix["parsed"]["info"]["authority"]
-                new_token_account = ix["parsed"]["info"]["destination"]
-                old_token_account = ix["parsed"]["info"]["source"]
+                new_authority = ix.info["authority"]
+                new_token_account = ix.info["destination"]
+                old_token_account = ix.info["source"]
 
     if transfered_check:
         logger.debug("Is transfer tx")

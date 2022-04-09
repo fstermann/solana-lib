@@ -36,12 +36,18 @@ class OuterInstruction(SafeDict):
             and self.info["mint"] == mint
         )
 
-    def is_initialize_account_for_mint(self, mint: str):
+    def is_initialize_account_for_mint(self, mint: str) -> bool:
         return (
             self.is_type("initializeAccount")
             and self.is_program("spl-token")
             and self.info["mint"] == mint
         )
+
+    def is_spl_token_transfer(self) -> bool:
+        return self.parsed["type"] in [
+            "transferChecked",
+            "transfer",
+        ] and self.is_program("spl-token")
 
 
 class InnerInstruction(SafeDict):
