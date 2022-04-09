@@ -52,7 +52,7 @@ def check_listing(tx: Transaction, mint: str):
     me_authority_check = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program(MagicEden.PROGRAM_V1):
+        if ix.is_program_id(MagicEden.PROGRAM_V1):
             logger.debug("Is MagicEdenV1")
 
             for iix in tx.instructions.inner[index]:
@@ -96,7 +96,7 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
     me_authority_transfered = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program(MagicEden.PROGRAM_V1):
+        if ix.is_program_id(MagicEden.PROGRAM_V1):
             logger.debug("Is MagicEdenV1")
 
             for iix in tx.instructions.inner[index]:
@@ -137,20 +137,15 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
 
 def check_mint(tx: Transaction, mint: str):
     for ix in tx.instructions.outer:
-        if ix["parsed"]["type"] == "mintTo":
-            logger.debug("Has mintTo")
-            logger.debug(f"Mint in tx {ix['parsed']['info']['mint']}")
-            logger.debug(f"Target mint {mint}")
-            if ix["parsed"]["info"]["mint"] == mint:
-                logger.debug("Is mint tx")
-
-                return MintActivity(
-                    transaction_id=tx.transaction_id,
-                    block_time=tx.block_time,
-                    slot=tx.slot,
-                    mint=mint,
-                    mint_authority=ix["parsed"]["info"]["mintAuthority"],
-                )
+        if ix.is_mint(mint):
+            logger.debug("Is correct mint tx")
+            return MintActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                mint_authority=ix.info["mintAuthority"],
+            )
     return None
     # if Metaplex.CANDY_MACHINE_V2 in program_ids:
     #     return True
@@ -166,6 +161,7 @@ def check_transfer(tx: Transaction, mint: str):
             and ix["parsed"]["info"]["mint"] == mint
         ):
             new_token_account = ix["parsed"]["info"]["account"]
+            logger.debug(f"Found new token account {new_token_account}")
 
         if (
             ix["parsed"]["type"] in ["transferChecked", "transfer"]
@@ -182,7 +178,8 @@ def check_transfer(tx: Transaction, mint: str):
             ):
                 transfered_check = True
                 new_authority = ix["parsed"]["info"]["authority"]
-                source_token_account = ix["parsed"]["info"]["source"]
+                new_token_account = ix["parsed"]["info"]["destination"]
+                old_token_account = ix["parsed"]["info"]["source"]
 
     if transfered_check:
         logger.debug("Is transfer tx")
@@ -192,6 +189,7 @@ def check_transfer(tx: Transaction, mint: str):
             slot=tx.slot,
             mint=mint,
             new_authority=new_authority,
-            transfered_from_account=source_token_account,
+            new_token_account=new_token_account,
+            old_token_account=old_token_account,
         )
     return None

@@ -9,11 +9,39 @@ class OuterInstruction(SafeDict):
     def data(self) -> SafeDict:
         return self["data"]
 
+    @property
+    def parsed(self) -> SafeDict:
+        return self["parsed"]
+
+    @property
+    def info(self) -> SafeDict:
+        return self.parsed["info"]
+
     def has_data(self) -> bool:
         return "data" in self
 
     def is_program(self, program: str) -> bool:
-        return self["programId"] == program
+        return self["program"] == program
+
+    def is_program_id(self, program_id: str) -> bool:
+        return self["programId"] == program_id
+
+    def is_type(self, _type: str) -> bool:
+        return self.parsed["type"] == _type
+
+    def is_mint(self, mint: str) -> bool:
+        return (
+            self.is_type("mintTo")
+            and self.is_program("spl-token")
+            and self.info["mint"] == mint
+        )
+
+    def is_initialize_account_for_mint(self, mint: str):
+        return (
+            self.is_type("initializeAccount")
+            and self.is_program("spl-token")
+            and self.info["mint"] == mint
+        )
 
 
 class InnerInstruction(SafeDict):
@@ -125,8 +153,9 @@ class ListingActivity(Activity):
 
 
 class TransferActivity(Activity):
-    new_authority: str
-    transfered_from_account: str
+    new_authority: str  # New owner
+    new_token_account: str  # New associate Token account
+    old_token_account: str  # Source associate Token account
 
     type_: ActivityType = ActivityType.TRANSFER
 
