@@ -56,6 +56,28 @@ class TestParse:
         assert activity.mint == mint
         assert activity.new_authority == "7JvFNAjVNXN9aABtgggELpQr7UreL5i3AtjhzTWcNcTo"
 
+    def test_parse_delisting_mev2(self):
+        tx = self.load_example_tx("tx_delisting_mev2")
+        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+        activity = check_delisting_or_sale(tx=tx, mint=mint)
+        assert isinstance(activity, DelistingActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
+
+        tx = self.load_example_tx("tx_delisting2_mev2")
+        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+        activity = check_delisting_or_sale(tx=tx, mint=mint)
+        assert isinstance(activity, DelistingActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
+
+        tx = self.load_example_tx("tx_delisting3_mev2")
+        mint = "GMXXVkCnikqj2ngbv12yrypBhN6idL8EV335k55oqXDP"
+        activity = check_delisting_or_sale(tx=tx, mint=mint)
+        assert isinstance(activity, DelistingActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "3YogkYzz6W3gauH8woNKU9Gs7Z6duXR1xBsAWTzdXCdd"
+
     def test_parse_mint_mev1(self):
         tx = self.load_example_tx("tx_mint_mev1")
         mint = "FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC"
