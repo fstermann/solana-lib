@@ -40,7 +40,7 @@ class ActivityType(str, Enum):
     MINT = "mint"
     LISTING = "listing"
     TRANSFER = "transfer"
-    LISTING_CANCELED = "cancel_listing"
+    DELISTING = "delisting"
     SALE = "sale"
 
 
@@ -71,10 +71,10 @@ class TransferActivity(Activity):
     type_: ActivityType = ActivityType.TRANSFER
 
 
-class CancelListingActivity(Activity):
+class DelistingActivity(Activity):
     new_authority: str
 
-    type_: ActivityType = ActivityType.LISTING_CANCELED
+    type_: ActivityType = ActivityType.DELISTING
 
 
 class SaleActivity(Activity):
