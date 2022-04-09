@@ -52,25 +52,17 @@ def check_listing(tx: Transaction, mint: str):
     me_authority_check = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        if ix["programId"] == MagicEden.PROGRAM_V1:
+        if ix.is_program(MagicEden.PROGRAM_V1):
             logger.debug("Is MagicEdenV1")
+
             for iix in tx.instructions.inner[index]:
-                if (
-                    iix["parsed"]["type"] == "createAccount"
-                    and iix["parsed"]["info"]["owner"] == MagicEden.PROGRAM_V1
-                    and iix["program"] == "system"
-                ):
+                if iix.is_create_account_by_program(MagicEden.PROGRAM_V1):
                     me_program_check = True
-                if (
-                    iix["parsed"]["type"] == "setAuthority"
-                    and iix["parsed"]["info"]["authorityType"] == "accountOwner"
-                    and iix["parsed"]["info"]["newAuthority"] == MagicEden.AUTHORITY
-                    and iix["program"] == "spl-token"
-                ):
+                if iix.is_new_authority(MagicEden.AUTHORITY):
                     me_authority_check = True
-                    listing_authority = iix["parsed"]["info"]["authority"]
-                    if "data" in ix:
-                        listing_price = get_me_listing_price_from_data(ix["data"])
+                    listing_authority = iix.authority
+                    if ix.has_data():
+                        listing_price = get_me_listing_price_from_data(ix.data)
 
     if me_program_check & me_authority_check:
         logger.debug("Is listing tx")
@@ -104,17 +96,21 @@ def check_delisting_or_sale(tx: Transaction, mint: str):
     me_authority_transfered = False
 
     for index, ix in enumerate(tx.instructions.outer):
-        if ix["programId"] == MagicEden.PROGRAM_V1:
+        # if ix["programId"] == MagicEden.PROGRAM_V1:
+        if ix.is_program(MagicEden.PROGRAM_V1):
             logger.debug("Is MagicEdenV1")
             for iix in tx.instructions.inner[index]:
-                if iix["parsed"]["type"] == "transfer":
+                if iix.is_type("transfer"):
+                    # if iix["parsed"]["type"] == "transfer":
                     sol_transfered_by.append(iix["parsed"]["info"]["source"])
 
                 if (
-                    iix["parsed"]["type"] == "setAuthority"
+                    iix.is_type("setAuthority")
+                    # iix["parsed"]["type"] == "setAuthority"
                     and iix["parsed"]["info"]["authorityType"] == "accountOwner"
                     and iix["parsed"]["info"]["authority"] == MagicEden.AUTHORITY
-                    and iix["program"] == "spl-token"
+                    and iix.is_program("spl-token")
+                    # and iix["program"] == "spl-token"
                 ):
                     me_authority_transfered = True
                     new_authority = iix["parsed"]["info"]["newAuthority"]

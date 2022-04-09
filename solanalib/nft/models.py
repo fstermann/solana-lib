@@ -4,18 +4,65 @@ from typing import List, Dict
 from solanalib.util import SafeDict
 
 
+class OuterInstruction(SafeDict):
+    @property
+    def data(self) -> SafeDict:
+        return self["data"]
+
+    def has_data(self) -> bool:
+        return "data" in self
+
+    def is_program(self, program: str) -> bool:
+        return self["programId"] == program
+
+
+class InnerInstruction(SafeDict):
+    @property
+    def parsed(self) -> SafeDict:
+        return self["parsed"]
+
+    @property
+    def info(self) -> SafeDict:
+        return self.parsed["info"]
+
+    @property
+    def authority(self) -> SafeDict:
+        return self.info["authority"]
+
+    def is_type(self, type_: str) -> bool:
+        return self.parsed["type"] == type_
+
+    def is_program(self, program: str) -> bool:
+        return self["program"] == program
+
+    def is_create_account_by_program(self, program: str) -> bool:
+        return (
+            self.is_type("createAccount")
+            and self.info["owner"] == program
+            and self.is_program("system")
+        )
+
+    def is_new_authority(self, authority: str) -> bool:
+        return (
+            self.is_type("setAuthority")
+            and self.info["authorityType"] == "accountOwner"
+            and self.info["newAuthority"] == authority
+            and self.is_program("spl-token")
+        )
+
+
 class Instructions(BaseModel):
-    outer: List[SafeDict]
-    inner: Dict[int, List[SafeDict]]
+    outer: List[OuterInstruction]
+    inner: Dict[int, List[InnerInstruction]]
 
     def __init__(self, transaction: dict):
         super().__init__(
             outer=[
-                SafeDict(ix)
+                OuterInstruction(ix)
                 for ix in transaction["transaction"]["message"]["instructions"]
             ],
             inner={
-                ix["index"]: [SafeDict(iix) for iix in ix["instructions"]]
+                ix["index"]: [InnerInstruction(iix) for iix in ix["instructions"]]
                 for ix in transaction["meta"]["innerInstructions"]
             },
         )
