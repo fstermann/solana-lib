@@ -100,7 +100,7 @@ class TestParse:
         assert activity.price_lamports == 1750000000
         assert activity.marketplace == MagicEdenV1.MARKETPLACE
 
-    def test_parse_transfer(self):
+    def test_parse_transfer_v1(self):
         tx = self.load_example_tx("tx_transfer_v1")
         mint = "2cQaPyqMaRhU4d9kASVtehNnBYekisjVVf3oTKao3K9E"
         activity = check_transfer(tx=tx, mint=mint)
@@ -112,6 +112,19 @@ class TestParse:
         )
         assert (
             activity.old_token_account == "B9U6Ftt4Vqg9f6xvXg1PD3sfc84t776eG6Upxo8dxDPJ"
+        )
+
+        tx = self.load_example_tx("tx_transfer2_v1")
+        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+        activity = check_transfer(tx=tx, mint=mint)
+        assert isinstance(activity, TransferActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "CXx7CiK43NbhdthMZXA6wC9JPbraLjvZcRwTWuRsLkwH"
+        assert (
+            activity.new_token_account == "7mTZW2DrvEXcPq5XaT4wRvbqX51CkkNVuA3K8cARy5sx"
+        )
+        assert (
+            activity.old_token_account == "HN5EzbsER7fud5QxhcHXYS8ddVAJgxzoRwMbQJBytbnE"
         )
 
     #     tx = self.load_example_tx("tx_transfer2")
