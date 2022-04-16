@@ -135,7 +135,7 @@ def get_me_listing_price_from_data(data, program):
     elif program == MagicEdenV2.PROGRAM:
         price_hex = hex_data[20:30]
     else:
-        raise NotImplemented("Unkown program")
+        raise NotImplementedError("Unkown program")
 
     price_little_endian = to_little_endian_from_hex(price_hex)
     price_lamports = int(price_little_endian, 16)

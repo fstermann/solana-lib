@@ -1,7 +1,5 @@
 from enum import Enum
 
-from pytest import Mark
-
 
 class Marketplace(str, Enum):
     MAGIC_EDEN_V1 = "MagicEdenV1"
