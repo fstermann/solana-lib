@@ -8,6 +8,7 @@ from solanalib.nft.models import (
     DelistingActivity,
     ListingActivity,
     MintActivity,
+    NFTTransaction,
     SaleActivity,
     Transaction,
     TransferActivity,
@@ -19,27 +20,47 @@ from solanalib.nft.models import (
 # - Cancel Listing or Sale
 # - Mint
 # - Transfer
-def parse_transaction(transaction: dict, mint: str) -> Activity:
+def parse_transaction(
+    transaction: Union[dict, Transaction, NFTTransaction], mint: str = None
+) -> Activity:
+    if isinstance(transaction, dict):
+        if not mint:
+            msg = "Did not receive mint parameter"
+            logger.error(msg)
+            raise AttributeError(msg)
+        transaction = NFTTransaction(transaction, mint=mint)
+
+    if isinstance(transaction, NFTTransaction):
+        mint = transaction.mint
+
+    elif isinstance(transaction, Transaction):
+        if mint is None:
+            msg = "Did not receive mint parameter"
+            logger.error(msg)
+            raise AttributeError(msg)
+    else:
+        msg = f"Unkown transaction datatype {type(transaction)}"
+        logger.error(msg)
+        raise AttributeError(msg)
+
     logger.debug("Check if Transaction is Listing")
 
-    tx = Transaction(transaction)
-
-    activity = check_listing(tx, mint)
+    activity = check_listing(transaction, mint)
     if activity:
         return activity
 
     logger.debug("Check if Transaction is Delisting or Sale")
-    activity = check_delisting_or_sale(tx, mint)
+    activity = check_delisting_or_sale(transaction, mint)
     if activity:
         return activity
 
     logger.debug("Check if Transaction is Mint")
-    activity = check_mint(tx, mint)
+    activity = check_mint(transaction, mint)
     if activity:
         return activity
 
     logger.debug("Check if Transaction is Transfer")
-    activity = check_transfer(tx, mint)
+    activity = check_transfer(transaction, mint)
     if activity:
         return activity
 
