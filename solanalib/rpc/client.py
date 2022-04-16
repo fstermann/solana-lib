@@ -50,3 +50,14 @@ class Client:
             for transaction_signature in transaction_signatures
         ]
         return self._make_request(payload)
+
+    def get_token_largest_accounts(
+        self,
+        token_mint: str,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        payload = self.method_builder.get_token_largest_accounts(
+            token_mint=token_mint,
+            commitment=commitment,
+        )
+        return self._make_request(payload)

@@ -38,3 +38,17 @@ class MethodBuilder:
             },
         ]
         return params
+
+    @payload(method="getTokenLargestAccounts")
+    def get_token_largest_accounts(
+        self,
+        token_mint: str,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        params = [
+            token_mint,
+            {
+                "commitment": commitment.value,
+            },
+        ]
+        return params
