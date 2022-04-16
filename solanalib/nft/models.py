@@ -132,6 +132,10 @@ class Transaction(BaseModel):
         )
 
 
+class NFTTransaction(Transaction):
+    mint: str
+
+
 class ActivityType(str, Enum):
     MINT = "mint"
     LISTING = "listing"
