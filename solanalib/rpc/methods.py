@@ -52,3 +52,27 @@ class MethodBuilder:
             },
         ]
         return params
+
+    @payload(method="getSignaturesForAddress")
+    def get_signatures_for_address(
+        self,
+        account: str,
+        limit: int = 1000,  # between 1 and 1000
+        before: str = None,
+        until: str = None,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        method_filter = {
+            "commitment": commitment.value,
+            "limit": limit,
+        }
+        if before:
+            method_filter["before"] = before
+        if until:
+            method_filter["until"] = until
+
+        params = [
+            account,
+            method_filter,
+        ]
+        return params

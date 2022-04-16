@@ -61,3 +61,20 @@ class Client:
             commitment=commitment,
         )
         return self._make_request(payload)
+
+    def get_signatures_for_address(
+        self,
+        account: str,
+        limit: int = 1000,  # between 1 and 1000
+        before: str = None,
+        until: str = None,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        payload = self.method_builder.get_signatures_for_address(
+            account=account,
+            limit=limit,
+            before=before,
+            until=until,
+            commitment=commitment,
+        )
+        return self._make_request(payload)
