@@ -127,6 +127,19 @@ class TestParse:
             activity.old_token_account == "HN5EzbsER7fud5QxhcHXYS8ddVAJgxzoRwMbQJBytbnE"
         )
 
+        tx = self.load_example_tx("tx_transfer3_v1")
+        mint = "H3g8jr9LD82rWmMoP9NZJVFHqjrpgtcdv3E66EmLwKvX"
+        activity = check_transfer(tx=tx, mint=mint)
+        assert isinstance(activity, TransferActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "EKkBw5vTqdZfVXYiUb79W1wB1zjyLXKqnuady5SHoG1V"
+        assert (
+            activity.new_token_account == "EtsBU3Co467oAD1acsMGCGJpx8d78diwss1Sj2d5HhDg"
+        )
+        assert (
+            activity.old_token_account == "53rjSwRTZMvN9yaKfgoBJMsnRgEmmx4quAuQ9GWR8Xuw"
+        )
+
     #     tx = self.load_example_tx("tx_transfer2")
     #     mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
     #     activity = check_transfer(tx=tx, mint=mint)
