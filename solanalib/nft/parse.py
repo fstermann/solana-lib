@@ -9,28 +9,28 @@ from .parsers.mints import parse_mint
 from .parsers.sales import parse_sale
 from .parsers.transfers import parse_transfer
 
-
 # Transaction types to check
 # - Listing
 # - Cancel Listing or Sale
 # - Mint
 # - Transfer
-def parse_transaction(
-    transaction: Union[dict, Transaction, NFTTransaction], mint: str = None
-) -> Activity:
+
+
+def _handle_input(
+    transaction: Union[dict, Transaction, NFTTransaction], mint: str
+) -> Union[str, Transaction]:
     if isinstance(transaction, dict):
         if not mint:
-            msg = "Did not receive mint parameter"
+            msg = "Did not receive mint parameter, only got a transaction dictionary."
             logger.error(msg)
             raise AttributeError(msg)
         transaction = NFTTransaction(transaction, mint=mint)
 
     if isinstance(transaction, NFTTransaction):
         mint = transaction.mint
-
     elif isinstance(transaction, Transaction):
         if mint is None:
-            msg = "Did not receive mint parameter"
+            msg = "Did not receive mint parameter, only got a transaction instance."
             logger.error(msg)
             raise AttributeError(msg)
     else:
@@ -38,32 +38,29 @@ def parse_transaction(
         logger.error(msg)
         raise AttributeError(msg)
 
+    return transaction, mint
+
+
+def parse_transaction(
+    transaction: Union[dict, Transaction, NFTTransaction], mint: str = None
+) -> Activity:
+    logger.debug("Checking input")
+    transaction, mint = _handle_input(transaction, mint)
+
     logger.info(f"Parsing transaction {transaction.transaction_id}")
 
-    logger.debug("Check if Transaction is Listing")
-    activity = parse_listing(transaction, mint)
-    if activity:
-        return activity
-
-    logger.debug("Check if Transaction is Delisting")
-    activity = parse_delisting(transaction, mint)
-    if activity:
-        return activity
-
-    logger.debug("Check if Transaction is Sale")
-    activity = parse_sale(transaction, mint)
-    if activity:
-        return activity
-
-    logger.debug("Check if Transaction is Mint")
-    activity = parse_mint(transaction, mint)
-    if activity:
-        return activity
-
-    logger.debug("Check if Transaction is Transfer")
-    activity = parse_transfer(transaction, mint)
-    if activity:
-        return activity
+    to_check = {
+        "Listing": parse_listing,
+        "Delisting": parse_delisting,
+        "Sale": parse_sale,
+        "Mint": parse_mint,
+        "Transfer": parse_transfer,
+    }
+    for activity_type, parser in to_check.items():
+        logger.debug(f"Check if transaction is '{activity_type}'")
+        activity = parser(transaction, mint)
+        if activity:
+            return activity
 
     logger.debug("Unkown Transaction type")
     return None
