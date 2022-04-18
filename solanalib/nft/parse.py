@@ -20,15 +20,18 @@ def _handle_input(
     transaction: Union[dict, Transaction, NFTTransaction], mint: str
 ) -> Union[str, Transaction]:
     if isinstance(transaction, dict):
+        logger.debug("Received transaction as dict")
         if not mint:
             msg = "Did not receive mint parameter, only got a transaction dictionary."
             logger.error(msg)
             raise AttributeError(msg)
-        transaction = NFTTransaction(transaction, mint=mint)
+        transaction = Transaction(transaction=transaction, mint=mint)
 
     if isinstance(transaction, NFTTransaction):
+        logger.debug("Received Transaction as NFTTransaction")
         mint = transaction.mint
     elif isinstance(transaction, Transaction):
+        logger.debug("Received Transaction as Transaction")
         if mint is None:
             msg = "Did not receive mint parameter, only got a transaction instance."
             logger.error(msg)
