@@ -123,12 +123,14 @@ class Transaction(BaseModel):
     slot: int
     instructions: Instructions
 
-    def __init__(self, transaction: dict):
+    def __init__(self, transaction: dict, *args, **kwargs):
         super().__init__(
             transaction_id=transaction["transaction"]["signatures"][0],
             block_time=transaction["blockTime"],
             slot=transaction["slot"],
             instructions=Instructions(transaction),
+            *args,
+            **kwargs
         )
 
 
