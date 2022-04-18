@@ -13,7 +13,7 @@ def get_me_listing_price_from_data(data, program):
     hex_data = base58.b58decode(data).hex()
 
     if program == MagicEdenV1.PROGRAM:
-        price_hex = hex_data[16:24]
+        price_hex = hex_data[16:26]
     elif program == MagicEdenV2.PROGRAM:
         price_hex = hex_data[20:30]
     else:
