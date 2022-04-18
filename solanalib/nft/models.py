@@ -176,7 +176,7 @@ class TransferActivity(Activity):
 
 
 class DelistingActivity(Activity):
-    new_authority: str
+    seller: str
     marketplace: Marketplace
 
     type_: ActivityType = ActivityType.DELISTING

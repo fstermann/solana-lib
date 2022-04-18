@@ -34,7 +34,7 @@ def parse_delisting_me(
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                new_authority=new_authority,
+                seller=new_authority,
                 marketplace=marketplace,
             )
         logger.debug("ME Authority transfers, but unknown tx")
