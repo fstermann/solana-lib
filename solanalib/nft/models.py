@@ -183,8 +183,10 @@ class DelistingActivity(Activity):
 
 
 class SaleActivity(Activity):
-    new_authority: str
+    new_token_account: str
     price_lamports: int
     marketplace: Marketplace
+    buyer: str
+    seller: str
 
     type_: ActivityType = ActivityType.SALE

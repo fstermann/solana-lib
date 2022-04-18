@@ -21,13 +21,16 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                     sol_transfered_by.append(iix.source)
                 if iix.is_set_authority() and iix.is_authority(MagicEdenV1.AUTHORITY):
                     me_authority_transfered = True
-                    new_authority = iix.new_authority
+                    new_token_account = iix.info["account"]
 
                 if ix.has_data():
                     instruction_data = ix.data
 
+                buyer = ix["accounts"][0]  # first account
+                seller = ix["accounts"][2]  # third account
+
     if me_authority_transfered:
-        if (sol_transfered_by) and (new_authority in sol_transfered_by):
+        if (sol_transfered_by) and (buyer in sol_transfered_by):
             logger.debug("Is Sale tx")
             if instruction_data:
                 sale_price = get_me_listing_price_from_data(
@@ -38,9 +41,11 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                new_authority=new_authority,
+                new_token_account=new_token_account,
                 price_lamports=sale_price,
                 marketplace=marketplace,
+                buyer=buyer,
+                seller=seller,
             )
         logger.debug("ME Authority transfers, but unknown tx")
     return None
@@ -64,6 +69,9 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                     logger.debug("Ix created new associate token account")
                     new_token_account = iix.info["account"]
 
+                    buyer = ix["accounts"][0]  # first account
+                    seller = ix["accounts"][1]  # second account
+
                     if ix.has_data():
                         sale_price = get_me_listing_price_from_data(
                             ix.data, MagicEdenV2.PROGRAM
@@ -73,9 +81,11 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                         block_time=tx.block_time,
                         slot=tx.slot,
                         mint=mint,
-                        new_authority=new_token_account,
+                        new_token_account=new_token_account,
                         price_lamports=sale_price,
                         marketplace=marketplace,
+                        buyer=buyer,
+                        seller=seller,
                     )
     return None
 
