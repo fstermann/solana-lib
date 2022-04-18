@@ -1,14 +1,13 @@
 from typing import Union
 
 from solanalib.constants import MagicEdenV1, MagicEdenV2
-from solanalib.nft.models import DelistingActivity, SaleActivity, Transaction
+from solanalib.nft.models import DelistingActivity, Transaction
 from solanalib.logger import logger
-from .util import get_me_listing_price_from_data
 
 # TODO split delist and sales
 def parse_delisting_me(
     magic_eden: Union[MagicEdenV1, MagicEdenV2], tx: Transaction, mint: str
-) -> Union[SaleActivity, DelistingActivity, None]:
+) -> Union[DelistingActivity, None]:
     sol_transfered_by = []
     me_authority_transfered = False
 
@@ -36,21 +35,6 @@ def parse_delisting_me(
                 slot=tx.slot,
                 mint=mint,
                 new_authority=new_authority,
-                marketplace=marketplace,
-            )
-        if (sol_transfered_by) and (new_authority in sol_transfered_by):
-            logger.debug("Is Sale tx")
-            if instruction_data:
-                sale_price = get_me_listing_price_from_data(
-                    instruction_data, magic_eden.PROGRAM
-                )
-            return SaleActivity(
-                transaction_id=tx.transaction_id,
-                block_time=tx.block_time,
-                slot=tx.slot,
-                mint=mint,
-                new_authority=new_authority,
-                price_lamports=sale_price,
                 marketplace=marketplace,
             )
         logger.debug("ME Authority transfers, but unknown tx")
