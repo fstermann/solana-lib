@@ -39,7 +39,7 @@ def check_listing_me(
             block_time=tx.block_time,
             slot=tx.slot,
             mint=mint,
-            listing_authority=listing_authority,
+            seller=listing_authority,
             price_lamports=listing_price,
             marketplace=marketplace,
         )

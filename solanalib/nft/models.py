@@ -160,7 +160,7 @@ class MintActivity(Activity):
 
 
 class ListingActivity(Activity):
-    listing_authority: str
+    seller: str
     price_lamports: int
     marketplace: Marketplace
 
