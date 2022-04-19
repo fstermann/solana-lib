@@ -8,34 +8,22 @@ from .util import get_me_listing_price_from_data
 
 
 def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
-    sol_transfered_by = []
-    me_authority_transfered = False
+    sale_price = None
+    new_token_account = None
 
-    for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program_id(MagicEdenV1.PROGRAM):
-            logger.debug(f"Program is {MagicEdenV1.NAME}")
-            marketplace = MagicEdenV1.MARKETPLACE
+    for ix in tx.instructions.outer:
+        if not ix.is_program_id(MagicEdenV1.PROGRAM):
+            continue
+        logger.debug(f"Program is {MagicEdenV1.NAME}")
+        marketplace = MagicEdenV1.MARKETPLACE
 
-            for iix in tx.instructions.inner[index]:
-                if iix.is_type("transfer"):
-                    sol_transfered_by.append(iix.source)
-                if iix.is_set_authority() and iix.is_authority(MagicEdenV1.AUTHORITY):
-                    me_authority_transfered = True
-                    new_token_account = iix.info["account"]
+        if ix.data[0:10] == MagicEdenV1.SALE_INSTRUCTION:
+            logger.debug("Is Sale instruction")
+            buyer = ix["accounts"][0]  # first account
+            seller = ix["accounts"][2]  # third account
+            new_token_account = ix["accounts"][1]  # second account
+            sale_price = get_me_listing_price_from_data(ix.data, MagicEdenV1.PROGRAM)
 
-                if ix.has_data():
-                    instruction_data = ix.data
-
-                buyer = ix["accounts"][0]  # first account
-                seller = ix["accounts"][2]  # third account
-
-    if me_authority_transfered:
-        if (sol_transfered_by) and (buyer in sol_transfered_by):
-            logger.debug("Is Sale tx")
-            if instruction_data:
-                sale_price = get_me_listing_price_from_data(
-                    instruction_data, MagicEdenV1.PROGRAM
-                )
             return SaleActivity(
                 transaction_id=tx.transaction_id,
                 block_time=tx.block_time,
@@ -47,7 +35,6 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                 buyer=buyer,
                 seller=seller,
             )
-        logger.debug("ME Authority transfers, but unknown tx")
     return None
 
 
@@ -55,81 +42,43 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
     sale_price = None
     new_token_account = None
 
-    for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program_id(MagicEdenV2.PROGRAM):
-            logger.debug(f"Program is {MagicEdenV2.NAME}")
-            marketplace = MagicEdenV2.MARKETPLACE
+    for ix in tx.instructions.outer:
+        if not ix.is_program_id(MagicEdenV2.PROGRAM):
+            continue
+        logger.debug(f"Program is {MagicEdenV2.NAME}")
+        marketplace = MagicEdenV2.MARKETPLACE
 
-            for iix in tx.instructions.inner[index]:
-                if (
-                    iix.is_type("create")
-                    and iix.is_program("spl-associated-token-account")
-                    and iix.info["mint"] == mint
-                ):
-                    logger.debug("Ix created new associate token account")
-                    new_token_account = iix.info["account"]
+        if ix.data[0:10] == MagicEdenV2.SALE_INSTRUCTION:
+            logger.debug("Is Sale instruction")
+            buyer = ix["accounts"][0]  # first account
+            seller = ix["accounts"][1]  # second account
+            new_token_account = ix["accounts"][7]  # eigth account
+            sale_price = get_me_listing_price_from_data(ix.data, MagicEdenV2.PROGRAM)
 
-                    buyer = ix["accounts"][0]  # first account
-                    seller = ix["accounts"][1]  # second account
-
-                    if ix.has_data():
-                        sale_price = get_me_listing_price_from_data(
-                            ix.data, MagicEdenV2.PROGRAM
-                        )
-                    return SaleActivity(
-                        transaction_id=tx.transaction_id,
-                        block_time=tx.block_time,
-                        slot=tx.slot,
-                        mint=mint,
-                        new_token_account=new_token_account,
-                        price_lamports=sale_price,
-                        marketplace=marketplace,
-                        buyer=buyer,
-                        seller=seller,
-                    )
+            return SaleActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                new_token_account=new_token_account,
+                price_lamports=sale_price,
+                marketplace=marketplace,
+                buyer=buyer,
+                seller=seller,
+            )
     return None
 
 
-def parse_sale(tx: Transaction, mint: str):
-    activity = parse_sale_mev1(tx=tx, mint=mint)
-    if activity:
-        return activity
+def parse_sale(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
+    to_parse = {
+        "MagiEdenV1": parse_sale_mev1,
+        "MagiEdenV2": parse_sale_mev2,
+    }
 
-    activity = parse_sale_mev2(tx=tx, mint=mint)
-    if activity:
-        return activity
+    for marketplace, parser in to_parse.items():
+        logger.info(f"Checking marketplace {marketplace}")
+        activity = parser(tx=tx, mint=mint)
+        if activity:
+            return activity
 
     return None
-
-
-# def check_sale_me_v2(tx: Transaction, mint: str):
-#     for index, ix in enumerate(tx.instructions.outer):
-#         if ix.is_program_id(MagicEdenV2.PROGRAM):
-#             logger.debug(f"Program is {MagicEdenV2.NAME}")
-#             marketplace = MagicEdenV2.MARKETPLACE
-
-#             for iix in tx.instructions.inner[index]:
-#                 # if iix.is_type("create") and iix.is_program(
-#                 #     "spl-associated-token-account"
-#                 # ):
-#                 #     logger.debug("Create associate token account")
-#                 #     if iix.info["mint"] == mint:
-#                 #         pass
-
-#                 if iix.is_type("transfer") and iix.is_authority(MagicEdenV2.AUTHORITY):
-#                     new_token_account = iix.info["destination"]
-#                     if ix.has_data():
-#                         instruction_data = ix.data
-#                         sale_price = get_me_listing_price_from_data(
-#                             instruction_data, MagicEdenV2.PROGRAM
-#                         )
-#                     return SaleActivity(
-#                         transaction_id=tx.transaction_id,
-#                         block_time=tx.block_time,
-#                         slot=tx.slot,
-#                         mint=mint,
-#                         new_authority=new_token_account,
-#                         price_lamports=sale_price,
-#                         marketplace=marketplace,
-#                     )
-#     return None
