@@ -14,7 +14,7 @@ def parse_delisting_mev1(tx: Transaction, mint: str) -> Union[DelistingActivity,
 
         if ix.data[0:10] == MagicEdenV1.DELISTING_INSTRUCTION:
             logger.debug("Is Delisting instruction")
-            seller = ix["accounts"][0]  # first account
+            seller = ix["accounts"][0]  # 1st account
 
             return DelistingActivity(
                 transaction_id=tx.transaction_id,
@@ -36,10 +36,10 @@ def parse_delisting_mev2(tx: Transaction, mint: str) -> Union[DelistingActivity,
 
         if ix.data[0:10] == MagicEdenV2.DELISTING_INSTRUCTION:
             logger.debug("Is Delisting Instruction")
-            if ix["accounts"][3] != mint:  # fourth account
+            if ix["accounts"][3] != mint:  # 4th account
                 logger.debug("Mint did not match")
 
-            seller = ix["accounts"][0]  # first account
+            seller = ix["accounts"][0]  # 1st account
 
             return DelistingActivity(
                 transaction_id=tx.transaction_id,

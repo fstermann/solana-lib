@@ -11,6 +11,8 @@ class MagicEdenV1(str, Enum):
     PROGRAM = "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8"
     AUTHORITY = "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp"
     DELISTING_INSTRUCTION = "TE6axTojnp"
+    LISTING_INSTRUCTION = "2RD37fomjE"
+    SALE_INSTRUCTION = "3UjLyJvuY4"
     MARKETPLACE = Marketplace.MAGIC_EDEN_V1.value
 
 

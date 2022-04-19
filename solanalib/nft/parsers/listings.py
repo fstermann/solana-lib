@@ -7,52 +7,68 @@ from solanalib.nft.models import ListingActivity, Transaction
 from .util import get_me_listing_price_from_data
 
 
-def check_listing_me(
-    magic_eden: Union[MagicEdenV1, MagicEdenV2], tx: Transaction, mint: str
-) -> Union[ListingActivity, None]:
-    me_program_check = False
-    me_authority_check = False
+def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
+    for ix in tx.instructions.outer:
+        if not ix.is_program_id(MagicEdenV1.PROGRAM):
+            continue
+        logger.debug(f"Program is {MagicEdenV1.NAME}")
+        marketplace = MagicEdenV1.MARKETPLACE
 
-    for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program_id(magic_eden.PROGRAM):
-            logger.debug(f"Is program {magic_eden.NAME}")
+        if ix.data[0:10] == MagicEdenV1.LISTING_INSTRUCTION:
+            logger.debug("Is Listing instruction")
 
-            for iix in tx.instructions.inner[index]:
-                if iix.is_create_account_by_program(magic_eden.PROGRAM):
-                    me_program_check = True
-                if iix.is_set_authority() and iix.is_new_authority(
-                    magic_eden.AUTHORITY
-                ):
-                    me_authority_check = True
-                    listing_authority = iix.authority
-                    marketplace = magic_eden.MARKETPLACE
+            seller = ix["accounts"][0]  # 1st account
+            listing_price = get_me_listing_price_from_data(ix.data, MagicEdenV1.PROGRAM)
 
-                    if ix.has_data():
-                        listing_price = get_me_listing_price_from_data(
-                            ix.data, magic_eden.PROGRAM
-                        )
-
-    if me_program_check & me_authority_check:
-        logger.debug("Is listing tx")
-        return ListingActivity(
-            transaction_id=tx.transaction_id,
-            block_time=tx.block_time,
-            slot=tx.slot,
-            mint=mint,
-            seller=listing_authority,
-            price_lamports=listing_price,
-            marketplace=marketplace,
-        )
+            return ListingActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                seller=seller,
+                price_lamports=listing_price,
+                marketplace=marketplace,
+            )
     return None
 
 
-def parse_listing(tx: Transaction, mint: str):
-    activity = check_listing_me(magic_eden=MagicEdenV1, tx=tx, mint=mint)
-    if activity:
-        return activity
+def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
+    for ix in tx.instructions.outer:
+        if not ix.is_program_id(MagicEdenV2.PROGRAM):
+            continue
+        logger.debug(f"Program is {MagicEdenV2.NAME}")
+        marketplace = MagicEdenV2.MARKETPLACE
 
-    activity = check_listing_me(magic_eden=MagicEdenV2, tx=tx, mint=mint)
-    if activity:
-        return activity
+        if ix.data[0:10] == MagicEdenV2.LISTING_INSTRUCTION:
+            logger.debug("Is Listing instruction")
+            if ix["accounts"][4] != mint:  # 5th account
+                logger.debug("Mint did not match")
+
+            seller = ix["accounts"][0]  # 1st account
+            listing_price = get_me_listing_price_from_data(ix.data, MagicEdenV2.PROGRAM)
+
+            return ListingActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                seller=seller,
+                price_lamports=listing_price,
+                marketplace=marketplace,
+            )
+    return None
+
+
+def parse_listing(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
+    to_parse = {
+        "MagiEdenV1": parse_listing_mev1,
+        "MagiEdenV2": parse_listing_mev2,
+    }
+
+    for marketplace, parser in to_parse.items():
+        logger.info(f"Checking marketplace {marketplace}")
+        activity = parser(tx=tx, mint=mint)
+        if activity:
+            return activity
 
     return None

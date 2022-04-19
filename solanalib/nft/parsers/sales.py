@@ -19,9 +19,9 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
 
         if ix.data[0:10] == MagicEdenV1.SALE_INSTRUCTION:
             logger.debug("Is Sale instruction")
-            buyer = ix["accounts"][0]  # first account
-            seller = ix["accounts"][2]  # third account
-            new_token_account = ix["accounts"][1]  # second account
+            buyer = ix["accounts"][0]  # 1st account
+            seller = ix["accounts"][2]  # 3rd account
+            new_token_account = ix["accounts"][1]  # 2nd account
             sale_price = get_me_listing_price_from_data(ix.data, MagicEdenV1.PROGRAM)
 
             return SaleActivity(
@@ -50,9 +50,9 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
 
         if ix.data[0:10] == MagicEdenV2.SALE_INSTRUCTION:
             logger.debug("Is Sale instruction")
-            buyer = ix["accounts"][0]  # first account
-            seller = ix["accounts"][1]  # second account
-            new_token_account = ix["accounts"][7]  # eigth account
+            buyer = ix["accounts"][0]  # 1st account
+            seller = ix["accounts"][1]  # 2nd account
+            new_token_account = ix["accounts"][7]  # 8th account
             sale_price = get_me_listing_price_from_data(ix.data, MagicEdenV2.PROGRAM)
 
             return SaleActivity(
