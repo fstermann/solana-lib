@@ -10,7 +10,7 @@ class MagicEdenV1(str, Enum):
     NAME = "MagicEdenV1"
     PROGRAM = "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8"
     AUTHORITY = "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp"
-    CANCEL_LISTING_INSTRUCTION = "TE6axTojnpk"
+    DELISTING_INSTRUCTION = "TE6axTojnp"
     MARKETPLACE = Marketplace.MAGIC_EDEN_V1.value
 
 
@@ -18,7 +18,9 @@ class MagicEdenV2(str, Enum):
     NAME = "MagicEdenV2"
     PROGRAM = "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K"
     AUTHORITY = "1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix"
-    CANCEL_LISTING_INSTRUCTION = "ENwHiaH9NA"
+    DELISTING_INSTRUCTION = "ENwHiaH9NA"
+    LISTING_INSTRUCTION = "2B3vSpRNKZ"
+    SALE_INSTRUCTION = "d6iteQtSVr"
     MARKETPLACE = Marketplace.MAGIC_EDEN_V2.value
 
 
