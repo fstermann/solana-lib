@@ -4,7 +4,7 @@ from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
 from solanalib.nft.models import ListingActivity, Transaction
 
-from .util import get_me_listing_price_from_data
+from .util import get_me_lamports_price_from_data
 
 
 def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
@@ -18,7 +18,9 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
             logger.debug("Is Listing instruction")
 
             seller = ix["accounts"][0]  # 1st account
-            listing_price = get_me_listing_price_from_data(ix.data, MagicEdenV1.PROGRAM)
+            listing_price = get_me_lamports_price_from_data(
+                ix.data, MagicEdenV1.PROGRAM
+            )
 
             return ListingActivity(
                 transaction_id=tx.transaction_id,
@@ -45,7 +47,9 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 logger.debug("Mint did not match")
 
             seller = ix["accounts"][0]  # 1st account
-            listing_price = get_me_listing_price_from_data(ix.data, MagicEdenV2.PROGRAM)
+            listing_price = get_me_lamports_price_from_data(
+                ix.data, MagicEdenV2.PROGRAM
+            )
 
             return ListingActivity(
                 transaction_id=tx.transaction_id,

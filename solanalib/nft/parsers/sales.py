@@ -4,7 +4,7 @@ from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
 from solanalib.nft.models import SaleActivity, Transaction
 
-from .util import get_me_listing_price_from_data
+from .util import get_me_lamports_price_from_data
 
 
 def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
@@ -22,7 +22,7 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
             buyer = ix["accounts"][0]  # 1st account
             seller = ix["accounts"][2]  # 3rd account
             new_token_account = ix["accounts"][1]  # 2nd account
-            sale_price = get_me_listing_price_from_data(ix.data, MagicEdenV1.PROGRAM)
+            sale_price = get_me_lamports_price_from_data(ix.data, MagicEdenV1.PROGRAM)
 
             return SaleActivity(
                 transaction_id=tx.transaction_id,
@@ -53,7 +53,7 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
             buyer = ix["accounts"][0]  # 1st account
             seller = ix["accounts"][1]  # 2nd account
             new_token_account = ix["accounts"][7]  # 8th account
-            sale_price = get_me_listing_price_from_data(ix.data, MagicEdenV2.PROGRAM)
+            sale_price = get_me_lamports_price_from_data(ix.data, MagicEdenV2.PROGRAM)
 
             return SaleActivity(
                 transaction_id=tx.transaction_id,

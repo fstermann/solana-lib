@@ -9,7 +9,7 @@ def to_little_endian_from_hex(val):
     return str_little
 
 
-def get_me_listing_price_from_data(data, program):
+def get_me_lamports_price_from_data(data, program):
     hex_data = base58.b58decode(data).hex()
 
     if program == MagicEdenV1.PROGRAM:
