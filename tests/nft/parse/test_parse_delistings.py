@@ -6,7 +6,7 @@ from solanalib.nft.parsers.delistings import parse_delisting
 class TestParseDelistings:
     def test_parse_delisting_mev1(self, load_tx):
         tx = load_tx("delistings", "mev1_01")
-        mint = "FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC"
+        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
         activity = parse_delisting(tx=tx, mint=mint)
         assert isinstance(activity, DelistingActivity)
         assert activity.mint == mint

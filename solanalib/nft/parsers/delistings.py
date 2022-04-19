@@ -1,53 +1,67 @@
 from typing import Union
 
 from solanalib.constants import MagicEdenV1, MagicEdenV2
-from solanalib.nft.models import DelistingActivity, Transaction
 from solanalib.logger import logger
+from solanalib.nft.models import DelistingActivity, Transaction
 
-# TODO split delist and sales
-def parse_delisting_me(
-    magic_eden: Union[MagicEdenV1, MagicEdenV2], tx: Transaction, mint: str
-) -> Union[DelistingActivity, None]:
-    sol_transfered_by = []
-    me_authority_transfered = False
 
-    for index, ix in enumerate(tx.instructions.outer):
-        if ix.is_program_id(magic_eden.PROGRAM):
-            logger.debug(f"Program is {magic_eden.NAME}")
-            marketplace = magic_eden.MARKETPLACE
+def parse_delisting_mev1(tx: Transaction, mint: str) -> Union[DelistingActivity, None]:
+    for ix in tx.instructions.outer:
+        if not ix.is_program_id(MagicEdenV1.PROGRAM):
+            continue
+        logger.debug(f"Program is {MagicEdenV1.NAME}")
+        marketplace = MagicEdenV1.MARKETPLACE
 
-            for iix in tx.instructions.inner[index]:
-                if iix.is_type("transfer"):
-                    sol_transfered_by.append(iix.source)
-                if iix.is_set_authority() and iix.is_authority(magic_eden.AUTHORITY):
-                    me_authority_transfered = True
-                    new_authority = iix.new_authority
+        if ix.data[0:10] == MagicEdenV1.DELISTING_INSTRUCTION:
+            logger.debug("Is Delisting instruction")
+            seller = ix["accounts"][0]  # first account
 
-                if ix.has_data():
-                    instruction_data = ix.data
-
-    if me_authority_transfered:
-        if magic_eden.CANCEL_LISTING_INSTRUCTION in instruction_data:
-            logger.debug("Is Cancel Listing tx")
             return DelistingActivity(
                 transaction_id=tx.transaction_id,
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                seller=new_authority,
+                seller=seller,
                 marketplace=marketplace,
             )
-        logger.debug("ME Authority transfers, but unknown tx")
+    return None
+
+
+def parse_delisting_mev2(tx: Transaction, mint: str) -> Union[DelistingActivity, None]:
+    for ix in tx.instructions.outer:
+        if not ix.is_program_id(MagicEdenV2.PROGRAM):
+            continue
+        logger.debug(f"Program is {MagicEdenV2.NAME}")
+        marketplace = MagicEdenV2.MARKETPLACE
+
+        if ix.data[0:10] == MagicEdenV2.DELISTING_INSTRUCTION:
+            logger.debug("Is Delisting Instruction")
+            if ix["accounts"][3] != mint:  # fourth account
+                logger.debug("Mint did not match")
+
+            seller = ix["accounts"][0]  # first account
+
+            return DelistingActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                seller=seller,
+                marketplace=marketplace,
+            )
     return None
 
 
 def parse_delisting(tx: Transaction, mint: str):
-    activity = parse_delisting_me(magic_eden=MagicEdenV1, tx=tx, mint=mint)
-    if activity:
-        return activity
+    to_parse = {
+        "MagiEdenV1": parse_delisting_mev1,
+        "MagiEdenV2": parse_delisting_mev2,
+    }
 
-    activity = parse_delisting_me(magic_eden=MagicEdenV2, tx=tx, mint=mint)
-    if activity:
-        return activity
+    for marketplace, parser in to_parse.items():
+        logger.info(f"Checking marketplace {marketplace}")
+        activity = parser(tx=tx, mint=mint)
+        if activity:
+            return activity
 
     return None
