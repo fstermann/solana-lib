@@ -39,13 +39,13 @@ def get_mint_activities(
         all_activities += activities
 
         last_activity = activities[-1]
-        if last_activity.type_ == ActivityType.TRANSFER:
-            current_token_account = last_activity.new_token_account
+        if last_activity.type_ != ActivityType.MINT:
+            current_token_account = last_activity.old_token_account
         else:
             logger.debug(
                 f"Found all activites for token account {current_token_account}"
             )
-            current_token_account is None
+            current_token_account = None
 
     return all_activities
 
@@ -54,13 +54,15 @@ def get_mint_activites_for_token_account(
     token_mint: str, token_account: str, client: ProClient = ProClient()
 ) -> List[Activity]:
     transactions = client.get_all_parsed_transactions_for_address(account=token_account)
-    txs = [NFTTransaction(tx, mint=token_mint) for tx in transactions]
+    txs = [
+        NFTTransaction(mint=token_mint, transaction=tx["result"]) for tx in transactions
+    ]
     activities = parse_all_transactions(transactions=txs)
     return activities
 
 
-def get_current_token_account(tokent_mint: PublicKey, client: Client = Client()):
-    response = client.get_token_largest_accounts(token_mint=tokent_mint)
+def get_current_token_account(token_mint: PublicKey, client: Client = Client()):
+    response = client.get_token_largest_accounts(token_mint=token_mint)
     account_infos = response["result"]["value"]
     largest_account = [
         info["address"] for info in account_infos if info["amount"] == "1"
