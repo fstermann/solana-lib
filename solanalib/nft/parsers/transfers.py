@@ -1,34 +1,95 @@
 from typing import Union
-from solanalib.nft.models import Transaction, TransferActivity
+
 from solanalib.logger import logger
+from solanalib.nft.models import OuterInstruction, Transaction, TransferActivity
 
 
-# TODO: Define "transfer" and support multiple cases
-def parse_transfer(tx: Transaction, mint: str) -> Union[TransferActivity, None]:
-    transfered_check = False
+def parse_transfer_type_transfer(
+    tx: Transaction, mint: str
+) -> Union[TransferActivity, None]:
+    """
+    Need to check for two instructions:
+    1)  create or initializeAccount
+        -> create new token account for the mint
+    2)  transfer
+        -> transfer to new token account
+
+    """
+
+    def is_create(ix: OuterInstruction) -> bool:
+        if not (ix.is_program("spl-associated-token-account") and ix.is_type("create")):
+            return False
+        logger.debug("Is createNewTokenAccount")
+
+        if not ix.info["mint"] == mint:
+            return False
+        logger.debug("Is correct mint")
+
+        return True
+
+    def is_initializeAccount(ix: OuterInstruction) -> bool:
+        if not (ix.is_program("spl-token") and ix.is_type("initializeAccount")):
+            return False
+        logger.debug("Is initializeAccount")
+
+        if not ix.info["mint"] == mint:
+            return False
+        logger.debug("Is correct mint")
+
+        return True
+
+    def is_transfer(ix: OuterInstruction) -> bool:
+        if not (ix.is_program("spl-token") and ix.is_type("transfer")):
+            return False
+        logger.debug("Is transfer")
+
+        return True
+
+    is_create_flag = False
+    is_transfer_flag = False
+    new_authority = None
+    old_token_account = None
     new_token_account = None
+
     for ix in tx.instructions.outer:
-        if ix.is_initialize_account_for_mint(mint):
-            new_token_account = ix["parsed"]["info"]["account"]
-            logger.debug(f"Found new token account {new_token_account}")
+        if is_create(ix) or is_initializeAccount(ix):
+            is_create_flag = True
 
-        if ix.is_spl_token_transfer():
-            logger.debug("Type is spl-token transfer")
-            if (
-                ix.info["mint"] == mint
-                and ix.info["tokenAmount"]["uiAmountString"] == "1"
-            ) or (
-                new_token_account
-                and new_token_account == ix.info["destination"]
-                and ix.info["amount"] == "1"
-            ):
-                transfered_check = True
-                new_authority = ix.info["authority"]
-                new_token_account = ix.info["destination"]
-                old_token_account = ix.info["source"]
+        if is_transfer(ix):
+            is_transfer_flag = True
+            new_authority = ix.info["authority"]  # new owner
+            old_token_account = ix.info["source"]
+            new_token_account = ix.info["destination"]
 
-    if transfered_check:
-        logger.debug("Is transfer tx")
+        if is_create_flag and is_transfer_flag:
+            return TransferActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                new_authority=new_authority,
+                new_token_account=new_token_account,
+                old_token_account=old_token_account,
+            )
+    return None
+
+
+def parse_transfer_type_transferChecked(
+    tx: Transaction, mint: str
+) -> Union[TransferActivity, None]:
+    for ix in tx.instructions.outer:
+        if not (ix.is_program("spl-token") and ix.is_type("transferChecked")):
+            continue
+        logger.debug("Is transferChecked")
+
+        if not ix.info["mint"] == mint:
+            continue
+        logger.debug("Is correct mint")
+
+        new_authority = ix.info["authority"]  # new owner
+        old_token_account = ix.info["source"]
+        new_token_account = ix.info["destination"]
+
         return TransferActivity(
             transaction_id=tx.transaction_id,
             block_time=tx.block_time,
@@ -38,4 +99,19 @@ def parse_transfer(tx: Transaction, mint: str) -> Union[TransferActivity, None]:
             new_token_account=new_token_account,
             old_token_account=old_token_account,
         )
+    return None
+
+
+def parse_transfer(tx: Transaction, mint: str) -> Union[TransferActivity, None]:
+    to_parse = {
+        "transferChecked": parse_transfer_type_transferChecked,
+        "transfer": parse_transfer_type_transfer,
+    }
+
+    for transfer_type, parser in to_parse.items():
+        logger.info(f"Checking for transfer type {transfer_type}")
+        activity = parser(tx=tx, mint=mint)
+        if activity:
+            return activity
+
     return None
