@@ -4,6 +4,7 @@ from enum import Enum
 class Marketplace(str, Enum):
     MAGIC_EDEN_V1 = "MagicEdenV1"
     MAGIC_EDEN_V2 = "MagicEdenV2"
+    AUCTION_HOUSE = "AuctionHouse"
 
 
 class MagicEdenV1(str, Enum):
@@ -24,6 +25,13 @@ class MagicEdenV2(str, Enum):
     LISTING_INSTRUCTION = "2B3vSpRNKZ"
     SALE_INSTRUCTION = "d6iteQtSVr"
     MARKETPLACE = Marketplace.MAGIC_EDEN_V2.value
+
+
+class AuctionHouse(str, Enum):
+    NAME = "AuctionHouse"
+    PROGRAM = "hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk"
+    LISTING_INSTRUCTION = "81r6u24fHZ"
+    MARKETPLACE = Marketplace.AUCTION_HOUSE.value
 
 
 class Metaplex(str, Enum):

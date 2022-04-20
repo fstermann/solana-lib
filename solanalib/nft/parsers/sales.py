@@ -73,10 +73,15 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
     return None
 
 
+def parse_sale_auction_house(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
+    return None
+
+
 def parse_sale(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
     to_parse = {
         "MagiEdenV1": parse_sale_mev1,
         "MagiEdenV2": parse_sale_mev2,
+        "AuctionHouse": parse_sale_auction_house,
     }
 
     for marketplace, parser in to_parse.items():

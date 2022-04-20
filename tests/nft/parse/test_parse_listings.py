@@ -1,4 +1,4 @@
-from solanalib.constants import MagicEdenV1, MagicEdenV2
+from solanalib.constants import AuctionHouse, MagicEdenV1, MagicEdenV2
 from solanalib.nft.models import ListingActivity
 from solanalib.nft.parsers.listings import parse_listing
 
@@ -59,3 +59,13 @@ class TestParseListings:
         assert activity.price_lamports == 29990000000
         assert activity.seller == "BP9a7nk1GJFAeLDJL1BxnXDRxzJviHT66w6Qcznz3t1X"
         assert activity.marketplace == MagicEdenV2.MARKETPLACE
+
+    def test_parse_listing_auction_house(self, load_tx):
+        tx = load_tx("listings", "auctionhouse_01")
+        mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
+        activity = parse_listing(tx=tx, mint=mint)
+        assert isinstance(activity, ListingActivity)
+        assert activity.mint == mint
+        assert activity.price_lamports == 40000000000
+        assert activity.seller == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
+        assert activity.marketplace == AuctionHouse.MARKETPLACE
