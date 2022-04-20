@@ -1,0 +1,256 @@
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "blockTime": 1650389442,
+        "meta": {
+            "err": null,
+            "fee": 10000,
+            "innerInstructions": [
+                {
+                    "index": 0,
+                    "instructions": [
+                        {
+                            "parsed": {
+                                "info": {
+                                    "amount": "1",
+                                    "delegate": "HS2eL9WJbh7pA4i4veK3YDwhGLRjY3uKryvG1NbHRprj",
+                                    "owner": "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED",
+                                    "source": "HFgFM3jHwN9QLUW9tS7iZhEaR51KmshDw9efkAzHPX85"
+                                },
+                                "type": "approve"
+                            },
+                            "program": "spl-token",
+                            "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                        },
+                        {
+                            "parsed": {
+                                "info": {
+                                    "destination": "9yxpNcUQ1TnsjRowhSGurZcAhZCLmacQatuxJ8V1dVA1",
+                                    "lamports": 897840,
+                                    "source": "5xyoD5hnWDBLsW6rjW2TBmqiDQsbod6Uaw15dRhNrDzn"
+                                },
+                                "type": "transfer"
+                            },
+                            "program": "system",
+                            "programId": "11111111111111111111111111111111"
+                        },
+                        {
+                            "parsed": {
+                                "info": {
+                                    "account": "9yxpNcUQ1TnsjRowhSGurZcAhZCLmacQatuxJ8V1dVA1",
+                                    "space": 1
+                                },
+                                "type": "allocate"
+                            },
+                            "program": "system",
+                            "programId": "11111111111111111111111111111111"
+                        },
+                        {
+                            "parsed": {
+                                "info": {
+                                    "account": "9yxpNcUQ1TnsjRowhSGurZcAhZCLmacQatuxJ8V1dVA1",
+                                    "owner": "hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk"
+                                },
+                                "type": "assign"
+                            },
+                            "program": "system",
+                            "programId": "11111111111111111111111111111111"
+                        }
+                    ]
+                }
+            ],
+            "logMessages": [
+                "Program hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk invoke [1]",
+                "Program log: Instruction: Sell",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+                "Program log: Instruction: Approve",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 2026 of 168868 compute units",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+                "Program log: Transfer 897840 lamports to the new account",
+                "Program 11111111111111111111111111111111 invoke [2]",
+                "Program 11111111111111111111111111111111 success",
+                "Program log: Allocate space for the account 9yxpNcUQ1TnsjRowhSGurZcAhZCLmacQatuxJ8V1dVA1",
+                "Program 11111111111111111111111111111111 invoke [2]",
+                "Program 11111111111111111111111111111111 success",
+                "Program log: Assign the account to the owning program",
+                "Program 11111111111111111111111111111111 invoke [2]",
+                "Program 11111111111111111111111111111111 success",
+                "Program log: Completed assignation!",
+                "Program hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk consumed 57321 of 200000 compute units",
+                "Program hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk success",
+                "Program 11111111111111111111111111111111 invoke [1]",
+                "Program 11111111111111111111111111111111 success"
+            ],
+            "postBalances": [
+                908264994,
+                10489990000,
+                2039280,
+                102835465202,
+                897840,
+                0,
+                5616720,
+                4085520,
+                953185920,
+                1,
+                0,
+                1009200,
+                1141440
+            ],
+            "postTokenBalances": [
+                {
+                    "accountIndex": 2,
+                    "mint": "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A",
+                    "owner": "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED",
+                    "uiTokenAmount": {
+                        "amount": "1",
+                        "decimals": 0,
+                        "uiAmount": 1.0,
+                        "uiAmountString": "1"
+                    }
+                }
+            ],
+            "preBalances": [
+                909172834,
+                10489990000,
+                2039280,
+                102835465202,
+                0,
+                0,
+                5616720,
+                4085520,
+                953185920,
+                1,
+                0,
+                1009200,
+                1141440
+            ],
+            "preTokenBalances": [
+                {
+                    "accountIndex": 2,
+                    "mint": "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A",
+                    "owner": "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED",
+                    "uiTokenAmount": {
+                        "amount": "1",
+                        "decimals": 0,
+                        "uiAmount": 1.0,
+                        "uiAmountString": "1"
+                    }
+                }
+            ],
+            "rewards": [],
+            "status": {
+                "Ok": null
+            }
+        },
+        "slot": 130447554,
+        "transaction": {
+            "message": {
+                "accountKeys": [
+                    {
+                        "pubkey": "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED",
+                        "signer": true,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r",
+                        "signer": true,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "HFgFM3jHwN9QLUW9tS7iZhEaR51KmshDw9efkAzHPX85",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "5xyoD5hnWDBLsW6rjW2TBmqiDQsbod6Uaw15dRhNrDzn",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "9yxpNcUQ1TnsjRowhSGurZcAhZCLmacQatuxJ8V1dVA1",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "ECEJ8q6c715iY5VAi3X5AuAaYLM4bAPU7gTh5LAkRb4Z",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "BcLCGmsLTYeEZAuoo6FoHksZ1euyVqgkGd5g1x9BboWS",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "11111111111111111111111111111111",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "HS2eL9WJbh7pA4i4veK3YDwhGLRjY3uKryvG1NbHRprj",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "SysvarRent111111111111111111111111111111111",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk",
+                        "signer": false,
+                        "writable": false
+                    }
+                ],
+                "instructions": [
+                    {
+                        "accounts": [
+                            "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED",
+                            "HFgFM3jHwN9QLUW9tS7iZhEaR51KmshDw9efkAzHPX85",
+                            "BcLCGmsLTYeEZAuoo6FoHksZ1euyVqgkGd5g1x9BboWS",
+                            "pAHAKoTJsAAe2ZcvTZUxoYzuygVAFAmbYmJYdWT886r",
+                            "3o9d13qUvEuuauhFrVom1vuCzgNsJifeaBYDPquaT73Y",
+                            "5xyoD5hnWDBLsW6rjW2TBmqiDQsbod6Uaw15dRhNrDzn",
+                            "9yxpNcUQ1TnsjRowhSGurZcAhZCLmacQatuxJ8V1dVA1",
+                            "ECEJ8q6c715iY5VAi3X5AuAaYLM4bAPU7gTh5LAkRb4Z",
+                            "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+                            "11111111111111111111111111111111",
+                            "HS2eL9WJbh7pA4i4veK3YDwhGLRjY3uKryvG1NbHRprj",
+                            "SysvarRent111111111111111111111111111111111"
+                        ],
+                        "data": "81r6u24fHZhKyUsm1DWJ1ocJUQpwuctpTvDkB",
+                        "programId": "hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk"
+                    },
+                    {
+                        "parsed": {
+                            "info": {
+                                "destination": "5xyoD5hnWDBLsW6rjW2TBmqiDQsbod6Uaw15dRhNrDzn",
+                                "lamports": 897840,
+                                "source": "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
+                            },
+                            "type": "transfer"
+                        },
+                        "program": "system",
+                        "programId": "11111111111111111111111111111111"
+                    }
+                ],
+                "recentBlockhash": "EvnQDAmz7JzXS2XM5xYxmEwbVptWugUmzLygfWTvH8Rm"
+            },
+            "signatures": [
+                "5yr7Y6d8be157BnWt2xcVAQzsyCZvVaKbvjbBTzoioMJ527Tu6U9p6KgPeHKC9WUF73JCCZfczYx2AmKYNbiCB2T",
+                "2QVNarZabAbL7hCWq6LRwTMRop5cS3mrqwV5GMj1syYjewPsvNd9S5tLGd9QKMZygL3opQU93beJXGAnG6WZxMk9"
+            ]
+        }
+    },
+    "id": 1
+}
