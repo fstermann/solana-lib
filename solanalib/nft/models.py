@@ -184,6 +184,7 @@ class DelistingActivity(Activity):
 
 class SaleActivity(Activity):
     new_token_account: str
+    old_token_account: str
     price_lamports: int
     marketplace: Marketplace
     buyer: str

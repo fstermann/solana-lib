@@ -83,3 +83,19 @@ class TestParseSale:
         assert activity.marketplace == MagicEdenV2.MARKETPLACE
         assert activity.buyer == "7yKzcfvxngQojVc362hRcLNnPXENXFKuVriurvNgw1Jk"
         assert activity.seller == "HdwwgWHAvPM2ksceWPCYvXNh5JdfcYdAQgrYkAH426L4"
+
+        tx = load_tx("sales", "mev2_04")
+        mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
+        activity = parse_sale(tx=tx, mint=mint)
+        assert isinstance(activity, SaleActivity)
+        assert activity.mint == mint
+        assert (
+            activity.new_token_account == "J5FMpsTp5Y7ZVtpBbRhB9f3X61iMe3HepKrPyzxvfQ4d"
+        )
+        assert (
+            activity.old_token_account == "HFgFM3jHwN9QLUW9tS7iZhEaR51KmshDw9efkAzHPX85"
+        )
+        assert activity.price_lamports == 32500000000
+        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.buyer == "Fqgd53Bg9GcDAppzcipZfRFr7dEWF7TsqEPNuVwc7u6Y"
+        assert activity.seller == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
