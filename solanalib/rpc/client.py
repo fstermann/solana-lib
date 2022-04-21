@@ -1,3 +1,4 @@
+import json
 from typing import List, Union
 
 import requests
@@ -5,6 +6,7 @@ import requests
 from .endpoints import Endpoint
 from .methods import MethodBuilder
 from .parameter import Commitment, Encoding
+from solanalib.logger import logger
 
 
 class Client:
@@ -16,8 +18,12 @@ class Client:
         self.method_builder = MethodBuilder()
 
     def _make_request(self, payload):
+        logger.debug(f"Making request to {self.endpoint.url}")
+        logger.debug(f"Payload: {payload}")
+
         response = requests.post(self.endpoint.url, json=payload)
-        return response.json()
+        json_response = response.json()
+        return json_response
 
     def health_check(self):
         pass
