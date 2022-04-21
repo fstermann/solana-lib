@@ -73,8 +73,14 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
     return None
 
 
+# TODO
 def parse_sale_auction_house(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
     return None
+
+
+# TODO see 3q3VzPrCXfjtXnspPaDb3S9L9wNoMBN9skgXzThDF1KDeaRiYmmtqGJZn2eQCMXMaZ2wAUQxR2Vmpsy6K7jf18gT
+def parse_sale_digital_eyes(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
+    return
 
 
 def parse_sale(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
@@ -82,6 +88,7 @@ def parse_sale(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
         "MagiEdenV1": parse_sale_mev1,
         "MagiEdenV2": parse_sale_mev2,
         "AuctionHouse": parse_sale_auction_house,
+        "DigitalEyes": parse_sale_digital_eyes,
     }
 
     for marketplace, parser in to_parse.items():
