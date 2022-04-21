@@ -144,6 +144,7 @@ class ActivityType(str, Enum):
     TRANSFER = "transfer"
     DELISTING = "delisting"
     SALE = "sale"
+    UNKNOWN = "unknown"
 
 
 class Activity(BaseModel):
@@ -151,6 +152,10 @@ class Activity(BaseModel):
     block_time: int
     slot: int
     mint: str
+
+
+class UnknownActivity(Activity):
+    type_: ActivityType = ActivityType.UNKNOWN
 
 
 class MintActivity(Activity):

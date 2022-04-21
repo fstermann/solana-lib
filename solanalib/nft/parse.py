@@ -1,7 +1,7 @@
 from typing import Union
 
 from solanalib.logger import logger
-from solanalib.nft.models import Activity, NFTTransaction, Transaction
+from solanalib.nft.models import Activity, NFTTransaction, Transaction, UnknownActivity
 
 from .parsers.delistings import parse_delisting
 from .parsers.listings import parse_listing
@@ -66,5 +66,9 @@ def parse_transaction(
             return activity
 
     logger.debug("Unkown Transaction type")
-    return None
-    # else case
+    return UnknownActivity(
+        transaction_id=transaction.transaction_id,
+        block_time=transaction.block_time,
+        slot=transaction.slot,
+        mint=mint,
+    )
