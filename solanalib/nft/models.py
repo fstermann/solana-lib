@@ -152,50 +152,43 @@ class Activity(BaseModel):
     block_time: int
     slot: int
     mint: str
+    old_token_account: str = None
+    new_token_account: str = None
+    old_authority: str = None  # -> old_authority, transfered from
+    new_authority: str = None  # -> buyer, minter, transfered to
 
     def __hash__(self):
         return hash(self.transaction_id)
 
 
 class UnknownActivity(Activity):
-    type_: ActivityType = ActivityType.UNKNOWN
+    type_: ActivityType = ActivityType.UNKNOWN.value
 
 
 class MintActivity(Activity):
-    mint_authority: str
-
-    type_: ActivityType = ActivityType.MINT
+    type_: ActivityType = ActivityType.MINT.value
 
 
 class ListingActivity(Activity):
-    seller: str
     price_lamports: int
     marketplace: Marketplace
 
-    type_: ActivityType = ActivityType.LISTING
+    type_: ActivityType = ActivityType.LISTING.value
 
 
 class TransferActivity(Activity):
-    new_authority: str  # New owner
-    new_token_account: str  # New associate Token account
-    old_token_account: str  # Source associate Token account
 
-    type_: ActivityType = ActivityType.TRANSFER
+    type_: ActivityType = ActivityType.TRANSFER.value
 
 
 class DelistingActivity(Activity):
-    seller: str
     marketplace: Marketplace
 
-    type_: ActivityType = ActivityType.DELISTING
+    type_: ActivityType = ActivityType.DELISTING.value
 
 
 class SaleActivity(Activity):
-    new_token_account: str
-    old_token_account: str
     price_lamports: int
     marketplace: Marketplace
-    buyer: str
-    seller: str
 
-    type_: ActivityType = ActivityType.SALE
+    type_: ActivityType = ActivityType.SALE.value

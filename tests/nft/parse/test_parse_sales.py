@@ -15,8 +15,8 @@ class TestParseSale:
         )
         assert activity.price_lamports == 1750000000
         assert activity.marketplace == MagicEdenV1.MARKETPLACE
-        assert activity.buyer == "3H3xcs9xwcqaSJm1EV9Mw9ooKqNCVuYTCntzxhdmuLez"
-        assert activity.seller == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
+        assert activity.new_authority == "3H3xcs9xwcqaSJm1EV9Mw9ooKqNCVuYTCntzxhdmuLez"
+        assert activity.old_authority == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
 
         tx = load_tx("sales", "mev1_02")
         mint = "E7QE3BRLpibyf1sdmXz7PziWYDcDdYJJuLoAC66KvG4G"
@@ -28,8 +28,8 @@ class TestParseSale:
         )
         assert activity.price_lamports == 8880000000
         assert activity.marketplace == MagicEdenV1.MARKETPLACE
-        assert activity.buyer == "DRn7MFrrGPoPiDf8BquppXvZLqDdDkEa62bxZFVyjnh4"
-        assert activity.seller == "8BnUAvat1qodexeX81NqGNdPSsv9ZPhL3dEtrgHsgekY"
+        assert activity.new_authority == "DRn7MFrrGPoPiDf8BquppXvZLqDdDkEa62bxZFVyjnh4"
+        assert activity.old_authority == "8BnUAvat1qodexeX81NqGNdPSsv9ZPhL3dEtrgHsgekY"
 
         tx = load_tx("sales", "mev1_03")
         mint = "EqHpPpujGkLM9gsebiDcS4NR9viWjmvoRTdYeB4LvmRX"
@@ -41,8 +41,8 @@ class TestParseSale:
         )
         assert activity.price_lamports == 8950000000
         assert activity.marketplace == MagicEdenV1.MARKETPLACE
-        assert activity.buyer == "2BxaLJ7HKgjRE48izSx6o5BBGr5hMn4khvH2Jhv1wVM9"
-        assert activity.seller == "2LyE4jjMmdU1r1nHkrHuFZ6ND51LZzYWoKN3H8YFzBgA"
+        assert activity.new_authority == "2BxaLJ7HKgjRE48izSx6o5BBGr5hMn4khvH2Jhv1wVM9"
+        assert activity.old_authority == "2LyE4jjMmdU1r1nHkrHuFZ6ND51LZzYWoKN3H8YFzBgA"
 
     def test_parse_sale_mev2(self, load_tx):
         tx = load_tx("sales", "mev2_01")
@@ -55,8 +55,8 @@ class TestParseSale:
         )
         assert activity.price_lamports == 3000000000
         assert activity.marketplace == MagicEdenV2.MARKETPLACE
-        assert activity.buyer == "FXA2iPDdHL7cR74vxBb7AgHpqzGFxY9rYXVfqNczZYmF"
-        assert activity.seller == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
+        assert activity.new_authority == "FXA2iPDdHL7cR74vxBb7AgHpqzGFxY9rYXVfqNczZYmF"
+        assert activity.old_authority == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
 
         tx = load_tx("sales", "mev2_02")
         mint = "GMXXVkCnikqj2ngbv12yrypBhN6idL8EV335k55oqXDP"
@@ -68,8 +68,8 @@ class TestParseSale:
         )
         assert activity.price_lamports == 17000000000
         assert activity.marketplace == MagicEdenV2.MARKETPLACE
-        assert activity.buyer == "3YogkYzz6W3gauH8woNKU9Gs7Z6duXR1xBsAWTzdXCdd"
-        assert activity.seller == "7HLjfngPUj5inDWLqc6Bu4vWS6HQx3C2ttvrtRDUAngb"
+        assert activity.new_authority == "3YogkYzz6W3gauH8woNKU9Gs7Z6duXR1xBsAWTzdXCdd"
+        assert activity.old_authority == "7HLjfngPUj5inDWLqc6Bu4vWS6HQx3C2ttvrtRDUAngb"
 
         tx = load_tx("sales", "mev2_03")
         mint = "DmwPBYvS8D5GSqYtuT2nV51xipqxLo938uYb4NCQjWB7"
@@ -81,8 +81,8 @@ class TestParseSale:
         )
         assert activity.price_lamports == 3500000000
         assert activity.marketplace == MagicEdenV2.MARKETPLACE
-        assert activity.buyer == "7yKzcfvxngQojVc362hRcLNnPXENXFKuVriurvNgw1Jk"
-        assert activity.seller == "HdwwgWHAvPM2ksceWPCYvXNh5JdfcYdAQgrYkAH426L4"
+        assert activity.new_authority == "7yKzcfvxngQojVc362hRcLNnPXENXFKuVriurvNgw1Jk"
+        assert activity.old_authority == "HdwwgWHAvPM2ksceWPCYvXNh5JdfcYdAQgrYkAH426L4"
 
         tx = load_tx("sales", "mev2_04")
         mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
@@ -97,5 +97,5 @@ class TestParseSale:
         )
         assert activity.price_lamports == 32500000000
         assert activity.marketplace == MagicEdenV2.MARKETPLACE
-        assert activity.buyer == "Fqgd53Bg9GcDAppzcipZfRFr7dEWF7TsqEPNuVwc7u6Y"
-        assert activity.seller == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
+        assert activity.new_authority == "Fqgd53Bg9GcDAppzcipZfRFr7dEWF7TsqEPNuVwc7u6Y"
+        assert activity.old_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"

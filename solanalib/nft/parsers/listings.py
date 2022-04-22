@@ -17,7 +17,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
         if ix.data[0:10] == MagicEdenV1.LISTING_INSTRUCTION:
             logger.debug("Is Listing instruction")
 
-            seller = ix["accounts"][0]  # 1st account
+            old_authority = ix["accounts"][0]  # 1st account
             listing_price = get_me_lamports_price_from_data(
                 ix.data, MagicEdenV1.PROGRAM
             )
@@ -27,7 +27,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                seller=seller,
+                old_authority=old_authority,
                 price_lamports=listing_price,
                 marketplace=marketplace,
             )
@@ -46,7 +46,7 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
             if ix["accounts"][4] != mint:  # 5th account
                 logger.debug("Mint did not match")
 
-            seller = ix["accounts"][0]  # 1st account
+            old_authority = ix["accounts"][0]  # 1st account
             listing_price = get_me_lamports_price_from_data(
                 ix.data, MagicEdenV2.PROGRAM
             )
@@ -56,7 +56,7 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                seller=seller,
+                old_authority=old_authority,
                 price_lamports=listing_price,
                 marketplace=marketplace,
             )
@@ -75,7 +75,7 @@ def parse_listing_auction_house(
         if ix.data[0:10] == AuctionHouse.LISTING_INSTRUCTION:
             logger.debug("Is Listing instruction")
 
-            seller = ix["accounts"][0]  # 1st account
+            old_authority = ix["accounts"][0]  # 1st account
             listing_price = get_me_lamports_price_from_data(
                 ix.data, AuctionHouse.PROGRAM
             )
@@ -85,7 +85,7 @@ def parse_listing_auction_house(
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                seller=seller,
+                old_authority=old_authority,
                 price_lamports=listing_price,
                 marketplace=marketplace,
             )

@@ -155,26 +155,30 @@ def parse_transfer_type_unknown(
     new_token_account = None
 
     for index, ix in enumerate(tx.instructions.outer):
+        if not index in tx.instructions.inner:
+            continue
+
         for iix in tx.instructions.inner[index]:
             if is_create(iix) or is_initializeAccount(iix):
+                new_authority = iix.info["owner"]  # new owner
                 is_create_flag = True
 
             if is_transfer(iix):
                 is_transfer_flag = True
-                new_authority = iix.info["authority"]  # new owner
+                # new_authority = iix.info["authority"]  # new owner
                 old_token_account = iix.info["source"]
                 new_token_account = iix.info["destination"]
 
-            if is_create_flag and is_transfer_flag:
-                return TransferActivity(
-                    transaction_id=tx.transaction_id,
-                    block_time=tx.block_time,
-                    slot=tx.slot,
-                    mint=mint,
-                    new_authority=new_authority,
-                    new_token_account=new_token_account,
-                    old_token_account=old_token_account,
-                )
+    if is_create_flag and is_transfer_flag:
+        return TransferActivity(
+            transaction_id=tx.transaction_id,
+            block_time=tx.block_time,
+            slot=tx.slot,
+            mint=mint,
+            new_authority=new_authority,
+            new_token_account=new_token_account,
+            old_token_account=old_token_account,
+        )
     return None
 
 

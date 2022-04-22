@@ -9,4 +9,4 @@ class TestParseMints:
         activity = parse_mint(tx=tx, mint=mint)
         assert isinstance(activity, MintActivity)
         assert activity.mint == mint
-        assert activity.mint_authority == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
+        assert activity.new_authority == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"

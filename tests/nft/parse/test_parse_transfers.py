@@ -79,10 +79,24 @@ class TestParseTransfers:
         activity = parse_transfer(tx=tx, mint=mint)
         assert isinstance(activity, TransferActivity)
         assert activity.mint == mint
-        assert activity.new_authority == "9hVanRBfdYvj8WktkBsDeYdmzcpBH85h5vRFp7B2WfoU"
+        assert activity.new_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
         assert (
             activity.new_token_account == "HFgFM3jHwN9QLUW9tS7iZhEaR51KmshDw9efkAzHPX85"
         )
         assert (
             activity.old_token_account == "JBpgtovoJjVtvHJUA69FeYLhYVhQyZCanzTLAWGBreZq"
+        )
+
+    def test_parse_transfer_unknown_02(self, load_tx):
+        tx = load_tx("transfers", "v3_01")
+        mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
+        activity = parse_transfer(tx=tx, mint=mint)
+        assert isinstance(activity, TransferActivity)
+        assert activity.mint == mint
+        assert activity.new_authority == "6Y7HG1cWWhgS1jiagpi5YQQLsmvuGsUTyt6ETcuERX3t"
+        assert (
+            activity.new_token_account == "GXN4jrxPHhNzq4aWKixALSTtiZeg5AJUZXxbjUBQUZro"
+        )
+        assert (
+            activity.old_token_account == "9JMbXbN6WkTsYxn9dErLmgWkj8yMxQZZvmT4vHihLLtw"
         )

@@ -12,6 +12,6 @@ def parse_mint(tx: Transaction, mint: str) -> Union[MintActivity, None]:
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                mint_authority=ix.info["mintAuthority"],
+                new_authority=ix.info["mintAuthority"],
             )
     return None
