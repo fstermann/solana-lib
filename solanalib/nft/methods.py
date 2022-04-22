@@ -47,7 +47,19 @@ def get_mint_activities(
             )
             current_token_account = None
 
+    # sorted_activities = sort_activities(all_activities)
     return all_activities
+
+
+def sort_activities(activities: List[Activity]) -> List[Activity]:
+    # Sort out duplicates
+    unique_activities = set(activities)
+
+    # Sort by blocktime reverse
+    sorted_activities = sorted(
+        unique_activities, key=lambda x: x.block_time, reverse=True
+    )
+    return sorted_activities
 
 
 def get_mint_activites_for_token_account(
