@@ -153,6 +153,9 @@ class Activity(BaseModel):
     slot: int
     mint: str
 
+    def __hash__(self):
+        return hash(self.transaction_id)
+
 
 class UnknownActivity(Activity):
     type_: ActivityType = ActivityType.UNKNOWN
