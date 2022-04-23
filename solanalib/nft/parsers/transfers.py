@@ -48,13 +48,22 @@ def parse_transfer_type_transfer(
             return False
         logger.debug("Is transfer")
 
+        if not ix.info["amount"] == "1":
+            return False
+        logger.debug("Transferred amount 1")
+
         return True
+
+    def get_create_instruction_for_account(
+        tx: Transaction, account: str
+    ) -> Union[None, OuterInstruction]:
+        for ix in tx.instructions.outer:
+            if is_create(ix) and ix.info["account"] == account:
+                return ix
+        return None
 
     is_create_flag = False
     is_transfer_flag = False
-    new_authority = None
-    old_token_account = None
-    new_token_account = None
 
     for ix in tx.instructions.outer:
         if is_create(ix) or is_initializeAccount(ix):
@@ -62,9 +71,14 @@ def parse_transfer_type_transfer(
 
         if is_transfer(ix):
             is_transfer_flag = True
-            new_authority = ix.info["authority"]  # new owner
+            old_authority = ix.info["authority"]
             old_token_account = ix.info["source"]
             new_token_account = ix.info["destination"]
+
+            create_ix = get_create_instruction_for_account(tx, new_token_account)
+            new_authority = None
+            if create_ix:
+                new_authority = create_ix.info["source"]
 
         if is_create_flag and is_transfer_flag:
             return TransferActivity(
@@ -72,6 +86,7 @@ def parse_transfer_type_transfer(
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
+                old_authority=old_authority,
                 new_authority=new_authority,
                 new_token_account=new_token_account,
                 old_token_account=old_token_account,
@@ -91,8 +106,10 @@ def parse_transfer_type_transferChecked(
             continue
         logger.debug("Is correct mint")
 
-        new_authority = ix.info["authority"]  # new owner
+        old_authority = ix.info["authority"]
         old_token_account = ix.info["source"]
+        # TODO have to find out new authority
+        # -> get account info and get owner
         new_token_account = ix.info["destination"]
 
         return TransferActivity(
@@ -100,7 +117,8 @@ def parse_transfer_type_transferChecked(
             block_time=tx.block_time,
             slot=tx.slot,
             mint=mint,
-            new_authority=new_authority,
+            old_authority=old_authority,
+            # new_authority=new_authority,
             new_token_account=new_token_account,
             old_token_account=old_token_account,
         )
@@ -160,12 +178,12 @@ def parse_transfer_type_unknown(
 
         for iix in tx.instructions.inner[index]:
             if is_create(iix) or is_initializeAccount(iix):
-                new_authority = iix.info["owner"]  # new owner
+                new_authority = iix.info["owner"]
                 is_create_flag = True
 
             if is_transfer(iix):
                 is_transfer_flag = True
-                # new_authority = iix.info["authority"]  # new owner
+                # new_authority = iix.info["authority"]
                 old_token_account = iix.info["source"]
                 new_token_account = iix.info["destination"]
 
