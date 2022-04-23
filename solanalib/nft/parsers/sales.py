@@ -22,7 +22,7 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
             new_authority = ix["accounts"][0]  # 1st account
             old_authority = ix["accounts"][2]  # 3rd account
             new_token_account = ix["accounts"][1]  # 2nd account
-            old_token_account = new_token_account  # In V1, MagicEden just transfers authority for new token account
+
             sale_price = get_me_lamports_price_from_data(ix.data, MagicEdenV1.PROGRAM)
 
             return SaleActivity(
@@ -30,12 +30,12 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
-                new_token_account=new_token_account,
-                old_token_account=old_token_account,
-                price_lamports=sale_price,
-                marketplace=marketplace,
                 new_authority=new_authority,
                 old_authority=old_authority,
+                new_token_account=new_token_account,
+                old_token_account=new_token_account,  # In V1, MagicEden just transfers authority for new token account
+                price_lamports=sale_price,
+                marketplace=marketplace,
             )
     return None
 
@@ -63,12 +63,12 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                 block_time=tx.block_time,
                 slot=tx.slot,
                 mint=mint,
+                new_authority=new_authority,
+                old_authority=old_authority,
                 new_token_account=new_token_account,
                 old_token_account=old_token_account,
                 price_lamports=sale_price,
                 marketplace=marketplace,
-                new_authority=new_authority,
-                old_authority=old_authority,
             )
     return None
 
