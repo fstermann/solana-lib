@@ -35,7 +35,7 @@ def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                 new_token_account=new_token_account,
                 old_token_account=new_token_account,  # In V1, MagicEden just transfers authority for new token account
                 price_lamports=sale_price,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 
@@ -68,7 +68,7 @@ def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
                 new_token_account=new_token_account,
                 old_token_account=old_token_account,
                 price_lamports=sale_price,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 

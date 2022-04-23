@@ -27,7 +27,7 @@ def parse_delisting_mev1(tx: Transaction, mint: str) -> Union[DelistingActivity,
                 new_authority=new_authority,
                 old_token_account=old_token_account,
                 new_token_account=old_token_account,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 
@@ -57,7 +57,7 @@ def parse_delisting_mev2(tx: Transaction, mint: str) -> Union[DelistingActivity,
                 new_authority=new_authority,
                 old_token_account=old_token_account,
                 new_token_account=old_token_account,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 

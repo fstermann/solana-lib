@@ -34,7 +34,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 old_token_account=old_token_account,
                 new_token_account=old_token_account,  # In MEv1 token account doesn't change
                 price_lamports=listing_price,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 
@@ -68,7 +68,7 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 old_token_account=old_token_account,
                 new_token_account=old_token_account,  # In MEv2 token account doesn't change
                 price_lamports=listing_price,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 
@@ -97,7 +97,7 @@ def parse_listing_auction_house(
                 mint=mint,
                 old_authority=old_authority,
                 price_lamports=listing_price,
-                marketplace=marketplace,
+                program=marketplace,
             )
     return None
 

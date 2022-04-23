@@ -156,6 +156,7 @@ class Activity(BaseModel):
     new_token_account: str = None
     old_authority: str = None  # -> old_authority, transfered from
     new_authority: str = None  # -> buyer, minter, transfered to
+    program: str = None
 
     def __hash__(self):
         return hash(self.transaction_id)
@@ -171,7 +172,6 @@ class MintActivity(Activity):
 
 class ListingActivity(Activity):
     price_lamports: int
-    marketplace: Marketplace
 
     type_: ActivityType = ActivityType.LISTING.value
 
@@ -182,13 +182,10 @@ class TransferActivity(Activity):
 
 
 class DelistingActivity(Activity):
-    marketplace: Marketplace
-
     type_: ActivityType = ActivityType.DELISTING.value
 
 
 class SaleActivity(Activity):
     price_lamports: int
-    marketplace: Marketplace
 
     type_: ActivityType = ActivityType.SALE.value

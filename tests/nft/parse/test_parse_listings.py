@@ -12,7 +12,7 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 1750000000
         assert activity.old_authority == "6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ"
-        assert activity.marketplace == MagicEdenV1.MARKETPLACE
+        assert activity.program == MagicEdenV1.MARKETPLACE
 
     def test_parse_listing_mev1_02(self, load_tx):
         tx = load_tx("listings", "mev1_02")
@@ -22,7 +22,7 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 8950000000
         assert activity.old_authority == "2LyE4jjMmdU1r1nHkrHuFZ6ND51LZzYWoKN3H8YFzBgA"
-        assert activity.marketplace == MagicEdenV1.MARKETPLACE
+        assert activity.program == MagicEdenV1.MARKETPLACE
 
     def test_parse_listing_mev1_03(self, load_tx):
         tx = load_tx("listings", "mev1_03")
@@ -32,7 +32,7 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 6500000000
         assert activity.old_authority == "BcKiawEXhLHwC4T1yPwSGRTzgHQdPa9TmCGuYpnaVMk9"
-        assert activity.marketplace == MagicEdenV1.MARKETPLACE
+        assert activity.program == MagicEdenV1.MARKETPLACE
 
     def test_parse_listing_mev2_01(self, load_tx):
         tx = load_tx("listings", "mev2_01")
@@ -42,7 +42,7 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 7490000000
         assert activity.old_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
-        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.program == MagicEdenV2.MARKETPLACE
 
     def test_parse_listing_mev2_02(self, load_tx):
         tx = load_tx("listings", "mev2_02")
@@ -52,7 +52,7 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 187690000000
         assert activity.old_authority == "8puHvsobwPa7taCVknWcFyaDDYjNAGvLHUEmZ33Ye8vs"
-        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.program == MagicEdenV2.MARKETPLACE
 
     def test_parse_listing_mev2_03(self, load_tx):
         tx = load_tx("listings", "mev2_03")
@@ -62,7 +62,7 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 29990000000
         assert activity.old_authority == "BP9a7nk1GJFAeLDJL1BxnXDRxzJviHT66w6Qcznz3t1X"
-        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.program == MagicEdenV2.MARKETPLACE
 
     def test_parse_listing_auction_house(self, load_tx):
         tx = load_tx("listings", "auctionhouse_01")
@@ -72,4 +72,4 @@ class TestParseListings:
         assert activity.mint == mint
         assert activity.price_lamports == 40000000000
         assert activity.old_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
-        assert activity.marketplace == AuctionHouse.MARKETPLACE
+        assert activity.program == AuctionHouse.MARKETPLACE

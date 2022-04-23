@@ -12,7 +12,7 @@ class TestParseDelistings:
         assert activity.mint == mint
         assert activity.new_authority == "7JvFNAjVNXN9aABtgggELpQr7UreL5i3AtjhzTWcNcTo"
         assert activity.old_authority == MagicEdenV1.AUTHORITY
-        assert activity.marketplace == MagicEdenV1.MARKETPLACE
+        assert activity.program == MagicEdenV1.MARKETPLACE
 
     def test_parse_delisting_mev2_01(self, load_tx):
         tx = load_tx("delistings", "mev2_01")
@@ -22,7 +22,7 @@ class TestParseDelistings:
         assert activity.mint == mint
         assert activity.new_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
         assert activity.old_authority == MagicEdenV2.AUTHORITY
-        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.program == MagicEdenV2.MARKETPLACE
 
     def test_parse_delisting_mev2_02(self, load_tx):
         tx = load_tx("delistings", "mev2_02")
@@ -32,7 +32,7 @@ class TestParseDelistings:
         assert activity.mint == mint
         assert activity.new_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
         assert activity.old_authority == MagicEdenV2.AUTHORITY
-        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.program == MagicEdenV2.MARKETPLACE
 
     def test_parse_delisting_mev2_03(self, load_tx):
         tx = load_tx("delistings", "mev2_03")
@@ -42,4 +42,4 @@ class TestParseDelistings:
         assert activity.mint == mint
         assert activity.new_authority == "3YogkYzz6W3gauH8woNKU9Gs7Z6duXR1xBsAWTzdXCdd"
         assert activity.old_authority == MagicEdenV2.AUTHORITY
-        assert activity.marketplace == MagicEdenV2.MARKETPLACE
+        assert activity.program == MagicEdenV2.MARKETPLACE
