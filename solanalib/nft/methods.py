@@ -47,8 +47,8 @@ def get_mint_activities(
             )
             current_token_account = None
 
-    # sorted_activities = sort_activities(all_activities)
-    return all_activities
+    sorted_activities = sort_activities(all_activities)
+    return sorted_activities
 
 
 def sort_activities(activities: List[Activity]) -> List[Activity]:
