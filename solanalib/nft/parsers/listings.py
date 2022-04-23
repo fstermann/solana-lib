@@ -47,7 +47,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
 
 
 def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
-    for ix in tx.instructions.outer:
+    for index, ix in enumerate(tx.instructions.outer):
         if not ix.is_program_id(MagicEdenV2.PROGRAM):
             continue
         logger.debug(f"Program is {MagicEdenV2.NAME}")
@@ -59,9 +59,17 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 logger.debug("Mint did not match")
 
             old_authority = ix["accounts"][0]  # 1st account
+            old_token_account = ix["accounts"][2]
             listing_price = get_me_lamports_price_from_data(
                 ix.data, MagicEdenV2.PROGRAM
             )
+            new_authority = None
+            for iix in tx.instructions.inner[index]:
+                if (
+                    iix.is_type("setAuthority")
+                    and iix.info["account"] == old_token_account
+                ):
+                    new_authority = iix.info["newAuthority"]
 
             return ListingActivity(
                 transaction_id=tx.transaction_id,
@@ -69,6 +77,9 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
                 slot=tx.slot,
                 mint=mint,
                 old_authority=old_authority,
+                new_authority=new_authority,
+                old_token_account=old_token_account,
+                new_token_account=old_token_account,  # In MEv2 token account doesn't change
                 price_lamports=listing_price,
                 marketplace=marketplace,
             )
