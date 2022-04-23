@@ -36,6 +36,7 @@ class AuctionHouse(str, Enum):
 
 class Metaplex(str, Enum):
     METADATA_PROGRAM = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+    CANDY_MACHINE_V1 = "cndyAnrLdpjq1Ssp1z8xxDsB8dxe7u4HL5Nxi2K5WXZ"
     CANDY_MACHINE_V2 = "cndy3Z4yapfJBmL3ShUp5exZKqR3z33thTzeNMm2gRZ"
 
 
