@@ -14,7 +14,9 @@ def parse_delisting_mev1(tx: Transaction, mint: str) -> Union[DelistingActivity,
 
         if ix.data[0:10] == MagicEdenV1.DELISTING_INSTRUCTION:
             logger.debug("Is Delisting instruction")
-            old_authority = ix["accounts"][0]  # 1st account
+            new_authority = ix["accounts"][0]  # 1st account
+            old_authority = MagicEdenV1.AUTHORITY
+            old_token_account = ix["accounts"][1]
 
             return DelistingActivity(
                 transaction_id=tx.transaction_id,
@@ -22,6 +24,9 @@ def parse_delisting_mev1(tx: Transaction, mint: str) -> Union[DelistingActivity,
                 slot=tx.slot,
                 mint=mint,
                 old_authority=old_authority,
+                new_authority=new_authority,
+                old_token_account=old_token_account,
+                new_token_account=old_token_account,
                 marketplace=marketplace,
             )
     return None
@@ -39,7 +44,9 @@ def parse_delisting_mev2(tx: Transaction, mint: str) -> Union[DelistingActivity,
             if ix["accounts"][3] != mint:  # 4th account
                 logger.debug("Mint did not match")
 
-            old_authority = ix["accounts"][0]  # 1st account
+            new_authority = ix["accounts"][0]  # 1st account
+            old_authority = MagicEdenV2.AUTHORITY
+            old_token_account = ix["accounts"][2]
 
             return DelistingActivity(
                 transaction_id=tx.transaction_id,
@@ -47,6 +54,9 @@ def parse_delisting_mev2(tx: Transaction, mint: str) -> Union[DelistingActivity,
                 slot=tx.slot,
                 mint=mint,
                 old_authority=old_authority,
+                new_authority=new_authority,
+                old_token_account=old_token_account,
+                new_token_account=old_token_account,
                 marketplace=marketplace,
             )
     return None
