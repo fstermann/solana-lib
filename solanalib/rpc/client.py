@@ -84,3 +84,16 @@ class Client:
             commitment=commitment,
         )
         return self._make_request(payload)
+
+    def get_account_info(
+        self,
+        account: str,
+        encoding: Encoding = Encoding.JSON_PARSED,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        payload = self.method_builder.get_account_info(
+            account=account,
+            encoding=encoding,
+            commitment=commitment,
+        )
+        return self._make_request(payload)

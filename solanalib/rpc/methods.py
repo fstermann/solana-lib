@@ -76,3 +76,19 @@ class MethodBuilder:
             method_filter,
         ]
         return params
+
+    @payload(method="getAccountInfo")
+    def get_account_info(
+        self,
+        account: str,
+        encoding: Encoding = Encoding.JSON_PARSED,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        params = [
+            account,
+            {
+                "encoding": encoding.value,
+                "commitment": commitment.value,
+            },
+        ]
+        return params
