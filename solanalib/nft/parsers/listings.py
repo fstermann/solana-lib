@@ -8,7 +8,7 @@ from .util import get_me_lamports_price_from_data
 
 
 def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
-    for index, ix in enumerate(tx.instructions.outer):
+    for ix in tx.instructions.outer:
         if not ix.is_program_id(MagicEdenV1.PROGRAM):
             continue
         logger.debug(f"Program is {MagicEdenV1.NAME}")
@@ -22,14 +22,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
             listing_price = get_me_lamports_price_from_data(
                 ix.data, MagicEdenV1.PROGRAM
             )
-
-            new_authority = None
-            for iix in tx.instructions.inner[index]:
-                if (
-                    iix.is_type("setAuthority")
-                    and iix.info["account"] == old_token_account
-                ):
-                    new_authority = iix.info["newAuthority"]
+            new_authority = MagicEdenV1.AUTHORITY
 
             return ListingActivity(
                 transaction_id=tx.transaction_id,
@@ -47,7 +40,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
 
 
 def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
-    for index, ix in enumerate(tx.instructions.outer):
+    for ix in tx.instructions.outer:
         if not ix.is_program_id(MagicEdenV2.PROGRAM):
             continue
         logger.debug(f"Program is {MagicEdenV2.NAME}")
@@ -63,13 +56,7 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
             listing_price = get_me_lamports_price_from_data(
                 ix.data, MagicEdenV2.PROGRAM
             )
-            new_authority = None
-            for iix in tx.instructions.inner[index]:
-                if (
-                    iix.is_type("setAuthority")
-                    and iix.info["account"] == old_token_account
-                ):
-                    new_authority = iix.info["newAuthority"]
+            new_authority = MagicEdenV2.AUTHORITY
 
             return ListingActivity(
                 transaction_id=tx.transaction_id,
