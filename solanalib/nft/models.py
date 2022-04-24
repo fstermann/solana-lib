@@ -83,6 +83,14 @@ class Instruction(SafeDict):
 
         return True
 
+    def is_set_authority_for_account(self, account: str) -> bool:
+        return (
+            self.is_type("setAuthority")
+            and self.info["authorityType"] == "accountOwner"
+            and self.is_program("spl-token")
+            and self.info["account"] == account
+        )
+
 
 class OuterInstruction(Instruction):
     @property
@@ -122,13 +130,6 @@ class InnerInstruction(Instruction):
             self.is_type("createAccount")
             and self.info["owner"] == program
             and self.is_program("system")
-        )
-
-    def is_set_authority(self) -> bool:
-        return (
-            self.is_type("setAuthority")
-            and self.info["authorityType"] == "accountOwner"
-            and self.is_program("spl-token")
         )
 
     def is_authority(self, authority: str) -> bool:
