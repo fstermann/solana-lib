@@ -1,0 +1,189 @@
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "blockTime": 1637780107,
+        "meta": {
+            "err": null,
+            "fee": 5000,
+            "innerInstructions": [
+                {
+                    "index": 0,
+                    "instructions": [
+                        {
+                            "parsed": {
+                                "info": {
+                                    "amount": "1",
+                                    "destination": "Ccuxg9SibF4eohijB5s9EvBxoSCEpVzLiQLG6B3Rih6m",
+                                    "multisigAuthority": "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw",
+                                    "signers": [
+                                        "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw"
+                                    ],
+                                    "source": "EcV6E3e35LSi3CByjnJEsjd3MpLYz5ZnhXeAxFCVpgt6"
+                                },
+                                "type": "transfer"
+                            },
+                            "program": "spl-token",
+                            "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                        },
+                        {
+                            "parsed": {
+                                "info": {
+                                    "account": "EcV6E3e35LSi3CByjnJEsjd3MpLYz5ZnhXeAxFCVpgt6",
+                                    "destination": "EDa3CjCUGpCKGjpef9UkWLoyZ6LDwNuWvnRcZgSsbBRq",
+                                    "multisigOwner": "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw",
+                                    "signers": [
+                                        "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw"
+                                    ]
+                                },
+                                "type": "closeAccount"
+                            },
+                            "program": "spl-token",
+                            "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                        }
+                    ]
+                }
+            ],
+            "logMessages": [
+                "Program HZaWndaNWHFDd9Dhk5pqUUtsmoBCqzb1MLu3NAh1VX6B invoke [1]",
+                "Program log: Instruction: Unlist",
+                "Program log: Calling the token program to transfer tokens to the initializer...",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+                "Program log: Instruction: Transfer",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 3246 of 191485 compute units",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+                "Program log: Instruction: CloseAccount",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 2422 of 185316 compute units",
+                "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+                "Program log: Closing the escrow account...",
+                "Program HZaWndaNWHFDd9Dhk5pqUUtsmoBCqzb1MLu3NAh1VX6B consumed 17961 of 200000 compute units",
+                "Program HZaWndaNWHFDd9Dhk5pqUUtsmoBCqzb1MLu3NAh1VX6B success"
+            ],
+            "postBalances": [
+                10104036400,
+                2039280,
+                0,
+                0,
+                10326856269,
+                1089991680,
+                1461600,
+                1141440
+            ],
+            "postTokenBalances": [
+                {
+                    "accountIndex": 1,
+                    "mint": "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck",
+                    "uiTokenAmount": {
+                        "amount": "1",
+                        "decimals": 0,
+                        "uiAmount": 1.0,
+                        "uiAmountString": "1"
+                    }
+                }
+            ],
+            "preBalances": [
+                10100317800,
+                2039280,
+                2039280,
+                1684320,
+                10326856269,
+                1089991680,
+                1461600,
+                1141440
+            ],
+            "preTokenBalances": [
+                {
+                    "accountIndex": 1,
+                    "mint": "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck",
+                    "uiTokenAmount": {
+                        "amount": "0",
+                        "decimals": 0,
+                        "uiAmount": null,
+                        "uiAmountString": "0"
+                    }
+                },
+                {
+                    "accountIndex": 2,
+                    "mint": "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck",
+                    "uiTokenAmount": {
+                        "amount": "1",
+                        "decimals": 0,
+                        "uiAmount": 1.0,
+                        "uiAmountString": "1"
+                    }
+                }
+            ],
+            "rewards": [],
+            "status": {
+                "Ok": null
+            }
+        },
+        "slot": 108519255,
+        "transaction": {
+            "message": {
+                "accountKeys": [
+                    {
+                        "pubkey": "EDa3CjCUGpCKGjpef9UkWLoyZ6LDwNuWvnRcZgSsbBRq",
+                        "signer": true,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "Ccuxg9SibF4eohijB5s9EvBxoSCEpVzLiQLG6B3Rih6m",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "EcV6E3e35LSi3CByjnJEsjd3MpLYz5ZnhXeAxFCVpgt6",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "AJ7WFZCjznR9dbr5WqDj7h2EFrgumeK36Wi89zCwi6hi",
+                        "signer": false,
+                        "writable": true
+                    },
+                    {
+                        "pubkey": "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck",
+                        "signer": false,
+                        "writable": false
+                    },
+                    {
+                        "pubkey": "HZaWndaNWHFDd9Dhk5pqUUtsmoBCqzb1MLu3NAh1VX6B",
+                        "signer": false,
+                        "writable": false
+                    }
+                ],
+                "instructions": [
+                    {
+                        "accounts": [
+                            "EDa3CjCUGpCKGjpef9UkWLoyZ6LDwNuWvnRcZgSsbBRq",
+                            "Ccuxg9SibF4eohijB5s9EvBxoSCEpVzLiQLG6B3Rih6m",
+                            "EcV6E3e35LSi3CByjnJEsjd3MpLYz5ZnhXeAxFCVpgt6",
+                            "AJ7WFZCjznR9dbr5WqDj7h2EFrgumeK36Wi89zCwi6hi",
+                            "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw",
+                            "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+                            "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck"
+                        ],
+                        "data": "2",
+                        "programId": "HZaWndaNWHFDd9Dhk5pqUUtsmoBCqzb1MLu3NAh1VX6B"
+                    }
+                ],
+                "recentBlockhash": "EucYoofPTtAmSpLDF7ajoxJLehYbc12okwio84YrVYjD"
+            },
+            "signatures": [
+                "CurSGvGGc6Pyvo3vyo1nDQ4kG2LJn7CFX8ii2dX6Ybs5KP4gQDpEryxgh7FsTQn64vpBTp2syft6AR9SZpJ8nfL"
+            ]
+        }
+    },
+    "id": 1
+}
