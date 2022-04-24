@@ -1,5 +1,6 @@
 from solanalib.nft.parsers.transfers import parse_transfer
 from solanalib.nft.models import TransferActivity
+from unittest import mock
 
 
 class TestParseTransfers:
@@ -106,7 +107,14 @@ class TestParseTransfers:
         assert activity.old_authority == "F4ghBzHFNgJxV4wEQDchU5i7n4XWWMBSaq7CuswGiVsr"
         assert activity.new_authority == "6Y7HG1cWWhgS1jiagpi5YQQLsmvuGsUTyt6ETcuERX3t"
 
-    def test_parse_transfer_inner_without_init_or_create(self, load_tx):
+    @mock.patch("solanalib.nft.parsers.transfers.Client.get_account_info")
+    def test_parse_transfer_inner_without_init_or_create(
+        self, mock_Client_get_account_info, load_tx, load_account_info
+    ):
+        account_info = load_account_info(
+            "transfers", "Ccuxg9SibF4eohijB5s9EvBxoSCEpVzLiQLG6B3Rih6m"
+        )
+        mock_Client_get_account_info.return_value = account_info
         # Transfers once in inner
         # Token account already exists, no init or create statement
         tx = load_tx("transfers", "inner_without_init_or_create")

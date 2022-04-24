@@ -15,3 +15,13 @@ def load_tx():
         return tx
 
     return loader
+
+
+@pytest.fixture
+def load_account_info():
+    def loader(tx_type: str, account: str) -> Transaction:
+        with open(f"tests/nft/txs/{tx_type}/accountInfo_{account}.json", "r") as f:
+            data = json.load(f)
+        return data
+
+    return loader
