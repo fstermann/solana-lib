@@ -6,6 +6,7 @@ from solanalib.nft.models import (
     OuterInstruction,
     Transaction,
     TransferActivity,
+    AccountInfo,
 )
 from solanalib.rpc.client import Client
 from solanalib.util import SafeDict
@@ -81,9 +82,10 @@ def parse_transfer_type_transfer(
             return True
 
         client = Client()
-        account_info = SafeDict(client.get_account_info(new_token_account))
-        if account_info["result"]["value"]["data"]["parsed"]["info"]["mint"] == mint:
-            return True
+        account_info = AccountInfo(client.get_account_info(new_token_account))
+        if account_info.has_info:
+            if account_info.mint == mint:
+                return True
 
         logger.debug(f"Didn't find correct mint for account {new_token_account}")
         return False

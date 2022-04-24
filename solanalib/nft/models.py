@@ -8,6 +8,16 @@ from solanalib.util import SafeDict
 from solanalib.logger import logger
 
 
+class AccountInfo(SafeDict):
+    @property
+    def has_info(self):
+        return self["result"]["value"] is not None
+
+    @property
+    def mint(self):
+        return self["result"]["value"]["data"]["parsed"]["info"]["mint"]
+
+
 class Instruction(SafeDict):
     @property
     def parsed(self) -> SafeDict:
