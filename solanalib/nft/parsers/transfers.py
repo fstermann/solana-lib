@@ -1,5 +1,4 @@
-from re import I
-from typing import Union
+from typing import List, Union
 
 from solanalib.logger import logger
 from solanalib.nft.models import (
@@ -8,6 +7,8 @@ from solanalib.nft.models import (
     Transaction,
     TransferActivity,
 )
+from solanalib.rpc.client import Client
+from solanalib.util import SafeDict
 
 
 def parse_transfer_type_transfer(
@@ -24,7 +25,7 @@ def parse_transfer_type_transfer(
 
             if index not in tx.instructions.inner:
                 continue
-            for iix in tx.instructions.inner[0]:
+            for iix in tx.instructions.inner[index]:
                 if (iix.is_create_associate_account_for_mint(mint)) and iix.info[
                     "account"
                 ] == account:
@@ -42,12 +43,29 @@ def parse_transfer_type_transfer(
 
             if index not in tx.instructions.inner:
                 continue
-            for iix in tx.instructions.inner[0]:
+            for iix in tx.instructions.inner[index]:
                 if (iix.is_initialize_account_for_mint(mint)) and iix.info[
                     "account"
                 ] == account:
                     return iix
         return OuterInstruction()
+
+    def get_setAuthority_instructions_for_account(
+        tx: Transaction, account: str
+    ) -> List[Instruction]:
+        ixs = []
+
+        for index, ix in enumerate(tx.instructions.outer):
+            if ix.is_set_authority_for_account(account):
+                ixs.append(ix)
+
+            if index not in tx.instructions.inner:
+                continue
+            for iix in tx.instructions.inner[index]:
+                if iix.is_set_authority_for_account(account):
+                    ixs.append(iix)
+
+        return ixs
 
     def check_mint(ix: Instruction, new_token_account: str):
         logger.debug(f"Checking mint for token account {new_token_account}")
@@ -62,18 +80,41 @@ def parse_transfer_type_transfer(
         if init_ix:
             return True
 
+        client = Client()
+        account_info = SafeDict(client.get_account_info(new_token_account))
+        if account_info["result"]["value"]["data"]["parsed"]["info"]["mint"] == mint:
+            return True
+
         logger.debug(f"Didn't find correct mint for account {new_token_account}")
         return False
 
     def get_new_authority_of_token_account(new_token_account: str):
         logger.debug(f"Checking new authority for token account {new_token_account}")
+        new_authority = None
+
         create_ix = get_create_instruction_for_account(tx, new_token_account)
         if create_ix:
-            return create_ix.info["wallet"]
+            new_authority = create_ix.info["wallet"]
 
-        init_ix = get_init_instruction_for_account(tx, new_token_account)
-        if init_ix:
-            return init_ix.info["owner"]
+        if not new_authority:
+            init_ix = get_init_instruction_for_account(tx, new_token_account)
+            if init_ix:
+                new_authority = init_ix.info["owner"]
+
+        if not new_authority:
+            logger.debug(f"Didn't find authority for token account {new_token_account}")
+            return ""
+
+        # Check if another authority is set
+        set_authority_ixs = get_setAuthority_instructions_for_account(
+            tx=tx, account=new_token_account
+        )
+        if not set_authority_ixs:
+            return new_authority
+
+        new_authority = set_authority_ixs[-1].info["newAuthority"]
+        if new_authority:
+            return new_authority
 
         logger.debug(f"Didn't find authority for token account {new_token_account}")
         return ""
