@@ -1,8 +1,9 @@
+from re import I
 from typing import Union
 
 from solanalib.logger import logger
 from solanalib.nft.models import (
-    InnerInstruction,
+    Instruction,
     OuterInstruction,
     Transaction,
     TransferActivity,
@@ -12,47 +13,174 @@ from solanalib.nft.models import (
 def parse_transfer_type_transfer(
     tx: Transaction, mint: str
 ) -> Union[TransferActivity, None]:
-    """
-    Need to check for two instructions:
-    1)  create or initializeAccount
-        -> create new token account for the mint
-    2)  transfer
-        -> transfer to new token account
-
-    """
-
     def get_create_instruction_for_account(
         tx: Transaction, account: str
-    ) -> Union[None, OuterInstruction]:
+    ) -> OuterInstruction:
         for ix in tx.instructions.outer:
-            if (
-                ix.is_create_associate_account_for_mint(mint)
-                and ix.info["account"] == account
-            ):
+            if (ix.is_create_associate_account_for_mint(mint)) and ix.info[
+                "account"
+            ] == account:
                 return ix
-        return None
 
-    is_create_flag = False
-    is_transfer_flag = False
+            if index not in tx.instructions.inner:
+                continue
+            for iix in tx.instructions.inner[0]:
+                if (iix.is_create_associate_account_for_mint(mint)) and iix.info[
+                    "account"
+                ] == account:
+                    return iix
+        return OuterInstruction()
 
-    for ix in tx.instructions.outer:
-        if ix.is_create_associate_account_for_mint(
-            mint
-        ) or ix.is_initialize_account_for_mint(mint):
-            is_create_flag = True
+    def get_init_instruction_for_account(
+        tx: Transaction, account: str
+    ) -> OuterInstruction:
+        for index, ix in enumerate(tx.instructions.outer):
+            if (ix.is_initialize_account_for_mint(mint)) and ix.info[
+                "account"
+            ] == account:
+                return ix
 
+            if index not in tx.instructions.inner:
+                continue
+            for iix in tx.instructions.inner[0]:
+                if (iix.is_initialize_account_for_mint(mint)) and iix.info[
+                    "account"
+                ] == account:
+                    return iix
+        return OuterInstruction()
+
+    def check_mint(ix: Instruction, new_token_account: str):
+        logger.debug(f"Checking mint for token account {new_token_account}")
+        if ix.info["mint"] == mint:
+            return True
+
+        create_ix = get_create_instruction_for_account(tx, new_token_account)
+        if create_ix:
+            return True
+
+        init_ix = get_init_instruction_for_account(tx, new_token_account)
+        if init_ix:
+            return True
+
+        logger.debug(f"Didn't find correct mint for account {new_token_account}")
+        return False
+
+    def get_new_authority_of_token_account(new_token_account: str):
+        logger.debug(f"Checking new authority for token account {new_token_account}")
+        create_ix = get_create_instruction_for_account(tx, new_token_account)
+        if create_ix:
+            return create_ix.info["wallet"]
+
+        init_ix = get_init_instruction_for_account(tx, new_token_account)
+        if init_ix:
+            return init_ix.info["owner"]
+
+        logger.debug(f"Didn't find authority for token account {new_token_account}")
+        return ""
+
+    transfers = []
+
+    for index, ix in enumerate(tx.instructions.outer):
+        logger.debug(f"Parsing Outer instruction {index}")
         if ix.is_spl_token_transfer():
-            is_transfer_flag = True
+            # Mint is transfered
+            old_authority = ix.get_authority()
+            old_token_account = ix.info["source"]
+            new_token_account = ix.info["destination"]
+
+            # Check if correct mint is transfered
+            if not check_mint(ix=ix, new_token_account=new_token_account):
+                continue
+
+            # If the new token_account is created in the tx, find the create ix.
+            new_authority = get_new_authority_of_token_account(
+                new_token_account=new_token_account
+            )
+            logger.debug(f"New authority: {new_authority}")
+
+            transfers.append(
+                TransferActivity(
+                    transaction_id=tx.transaction_id,
+                    block_time=tx.block_time,
+                    slot=tx.slot,
+                    mint=mint,
+                    old_authority=old_authority,
+                    new_authority=new_authority,
+                    new_token_account=new_token_account,
+                    old_token_account=old_token_account,
+                )
+            )
+
+        if not ix.is_parsed:
+            logger.debug(f"Parsing Inner instruction {index}")
+            if not index in tx.instructions.inner:
+                continue
+
+            for iix in tx.instructions.inner[index]:
+                if iix.is_spl_token_transfer():
+                    # mint is transfered
+                    old_authority = iix.get_authority()
+                    old_token_account = iix.info["source"]
+                    new_token_account = iix.info["destination"]
+
+                    # Check if correct mint is transfered
+                    if not check_mint(ix=iix, new_token_account=new_token_account):
+                        continue
+
+                    # If the new token_account is created in the tx, find the create ix.
+                    new_authority = get_new_authority_of_token_account(
+                        new_token_account=new_token_account
+                    )
+                    logger.debug(f"New authority: {new_authority}")
+
+                    transfers.append(
+                        TransferActivity(
+                            transaction_id=tx.transaction_id,
+                            block_time=tx.block_time,
+                            slot=tx.slot,
+                            mint=mint,
+                            old_authority=old_authority,
+                            new_authority=new_authority,
+                            old_token_account=old_token_account,
+                            new_token_account=new_token_account,
+                        )
+                    )
+
+    logger.debug(f"Found {len(transfers)} transfers")
+
+    if len(transfers) == 1:
+        return transfers[0]
+    if len(transfers) > 1:
+        return TransferActivity(
+            transaction_id=tx.transaction_id,
+            block_time=tx.block_time,
+            slot=tx.slot,
+            mint=mint,
+            old_authority=transfers[0].old_authority,
+            new_authority=transfers[-1].new_authority,
+            old_token_account=transfers[0].old_token_account,
+            new_token_account=transfers[-1].new_token_account,
+        )
+
+    return None
+
+
+def parse_transfer_type_transferChecked(
+    tx: Transaction, mint: str
+) -> Union[TransferActivity, None]:
+    for ix in tx.instructions.outer:
+        if ix.is_spl_token_checked_transfer() and ix.info["mint"] == mint:
+            # mint is transfered
             old_authority = ix.info["authority"]
             old_token_account = ix.info["source"]
             new_token_account = ix.info["destination"]
 
-            create_ix = get_create_instruction_for_account(tx, new_token_account)
-            new_authority = None
-            if create_ix:
-                new_authority = create_ix.info["source"]
+            # If the new token_account is created in the tx, find the create ix.
+            # create_ix = get_create_instruction_for_account(tx, new_token_account)
+            # new_authority = None
+            # if create_ix:
+            new_authority = tx.get_post_owner(mint)
 
-        if is_create_flag and is_transfer_flag:
             return TransferActivity(
                 transaction_id=tx.transaction_id,
                 block_time=tx.block_time,
@@ -66,117 +194,11 @@ def parse_transfer_type_transfer(
     return None
 
 
-def parse_transfer_type_transferChecked(
-    tx: Transaction, mint: str
-) -> Union[TransferActivity, None]:
-    for ix in tx.instructions.outer:
-        if not (ix.is_program("spl-token") and ix.is_type("transferChecked")):
-            continue
-        logger.debug("Is transferChecked")
-
-        if not ix.info["mint"] == mint:
-            continue
-        logger.debug("Is correct mint")
-
-        old_authority = ix.info["authority"]
-        old_token_account = ix.info["source"]
-        # TODO have to find out new authority
-        # -> get account info and get owner
-        new_token_account = ix.info["destination"]
-
-        return TransferActivity(
-            transaction_id=tx.transaction_id,
-            block_time=tx.block_time,
-            slot=tx.slot,
-            mint=mint,
-            old_authority=old_authority,
-            # new_authority=new_authority,
-            new_token_account=new_token_account,
-            old_token_account=old_token_account,
-        )
-    return None
-
-
-def parse_transfer_type_unknown(
-    tx: Transaction, mint: str
-) -> Union[TransferActivity, None]:
-    """
-    Need to check for two instructions:
-    1)  create or initializeAccount
-        -> create new token account for the mint
-    2)  transfer
-        -> transfer to new token account
-
-    """
-
-    def is_create(ix: InnerInstruction) -> bool:
-        if not (ix.is_program("spl-associated-token-account") and ix.is_type("create")):
-            return False
-        logger.debug("Is createNewTokenAccount")
-
-        if not ix.info["mint"] == mint:
-            return False
-        logger.debug("Is correct mint")
-
-        return True
-
-    def is_initializeAccount(ix: InnerInstruction) -> bool:
-        if not (ix.is_program("spl-token") and ix.is_type("initializeAccount")):
-            return False
-        logger.debug("Is initializeAccount")
-
-        if not ix.info["mint"] == mint:
-            return False
-        logger.debug("Is correct mint")
-
-        return True
-
-    def is_transfer(ix: InnerInstruction) -> bool:
-        if not (ix.is_program("spl-token") and ix.is_type("transfer")):
-            return False
-        logger.debug("Is transfer")
-
-        return True
-
-    is_create_flag = False
-    is_transfer_flag = False
-    new_authority = None
-    old_token_account = None
-    new_token_account = None
-
-    for index, ix in enumerate(tx.instructions.outer):
-        if not index in tx.instructions.inner:
-            continue
-
-        for iix in tx.instructions.inner[index]:
-            if is_create(iix) or is_initializeAccount(iix):
-                new_authority = iix.info["owner"]
-                is_create_flag = True
-
-            if is_transfer(iix):
-                is_transfer_flag = True
-                # new_authority = iix.info["authority"]
-                old_token_account = iix.info["source"]
-                new_token_account = iix.info["destination"]
-
-    if is_create_flag and is_transfer_flag:
-        return TransferActivity(
-            transaction_id=tx.transaction_id,
-            block_time=tx.block_time,
-            slot=tx.slot,
-            mint=mint,
-            new_authority=new_authority,
-            new_token_account=new_token_account,
-            old_token_account=old_token_account,
-        )
-    return None
-
-
 def parse_transfer(tx: Transaction, mint: str) -> Union[TransferActivity, None]:
     to_parse = {
         "transferChecked": parse_transfer_type_transferChecked,
         "transfer": parse_transfer_type_transfer,
-        "unknown": parse_transfer_type_unknown,
+        # "unknown": parse_transfer_type_unknown,
     }
 
     for transfer_type, parser in to_parse.items():

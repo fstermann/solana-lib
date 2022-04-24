@@ -9,27 +9,14 @@ class TestParseTransfers:
         activity = parse_transfer(tx=tx, mint=mint)
         assert isinstance(activity, TransferActivity)
         assert activity.mint == mint
-        assert activity.new_authority == "7JvFNAjVNXN9aABtgggELpQr7UreL5i3AtjhzTWcNcTo"
+        assert activity.new_authority == "9VarrpaH6KyAnhCFLxW69Am8gtXGEC9oHy8rJCTwZtqp"
         assert (
-            activity.new_token_account == "BEPURPfP9LbAypFaDVVEf9KzXAoVmFA9SahdqcVJPvB"
+            activity.new_token_account == "EyEc7WEWJ6BNhY1QEeJnHAqC8fZuywm8PW3LRntEBr8b"
         )
         assert (
             activity.old_token_account == "DbM2nNjaPWJ5NfxYt68QZR2DAtEuXfyA282A5RE6ZXk4"
         )
-
-    def test_parse_transfer_transferChecked_02(self, load_tx):
-        tx = load_tx("transfers", "v0_02")
-        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
-        activity = parse_transfer(tx=tx, mint=mint)
-        assert isinstance(activity, TransferActivity)
-        assert activity.mint == mint
-        assert activity.new_authority == "7JvFNAjVNXN9aABtgggELpQr7UreL5i3AtjhzTWcNcTo"
-        assert (
-            activity.new_token_account == "BEPURPfP9LbAypFaDVVEf9KzXAoVmFA9SahdqcVJPvB"
-        )
-        assert (
-            activity.old_token_account == "DbM2nNjaPWJ5NfxYt68QZR2DAtEuXfyA282A5RE6ZXk4"
-        )
+        assert activity.old_authority == "7JvFNAjVNXN9aABtgggELpQr7UreL5i3AtjhzTWcNcTo"
 
     def test_parse_transfer_transfer_01(self, load_tx):
         tx = load_tx("transfers", "v1_01")
@@ -100,3 +87,17 @@ class TestParseTransfers:
         assert (
             activity.old_token_account == "9JMbXbN6WkTsYxn9dErLmgWkj8yMxQZZvmT4vHihLLtw"
         )
+
+    # def test_parse_transfer_unknown_03(self, load_tx):
+    #     tx = load_tx("transfers", "v4_01")
+    #     mint = "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck"
+    #     activity = parse_transfer(tx=tx, mint=mint)
+    #     assert isinstance(activity, TransferActivity)
+    #     assert activity.mint == mint
+    #     # assert activity.new_authority == "6Y7HG1cWWhgS1jiagpi5YQQLsmvuGsUTyt6ETcuERX3t"
+    #     assert (
+    #         activity.new_token_account == "Ccuxg9SibF4eohijB5s9EvBxoSCEpVzLiQLG6B3Rih6m"
+    #     )
+    #     assert (
+    #         activity.old_token_account == "EcV6E3e35LSi3CByjnJEsjd3MpLYz5ZnhXeAxFCVpgt6"
+    #     )
