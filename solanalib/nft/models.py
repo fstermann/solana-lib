@@ -4,6 +4,7 @@ from typing import Dict, List
 from pydantic import BaseModel
 from solanalib.constants import Marketplace
 from solanalib.util import SafeDict
+from solanalib.logger import logger
 
 
 class OuterInstruction(SafeDict):
@@ -38,18 +39,47 @@ class OuterInstruction(SafeDict):
             and self.info["mint"] == mint
         )
 
+    def is_create_associate_account_for_mint(self, mint: str) -> bool:
+        if not (
+            self.is_program("spl-associated-token-account") and self.is_type("create")
+        ):
+            return False
+        logger.debug("Is createNewTokenAccount")
+
+        if not self.info["mint"] == mint:
+            return False
+        logger.debug("Is correct mint")
+
+        return True
+
     def is_initialize_account_for_mint(self, mint: str) -> bool:
-        return (
-            self.is_type("initializeAccount")
-            and self.is_program("spl-token")
-            and self.info["mint"] == mint
-        )
+        if not (self.is_program("spl-token") and self.is_type("initializeAccount")):
+            return False
+        logger.debug("Is initializeAccount")
+
+        if not self.info["mint"] == mint:
+            return False
+        logger.debug("Is correct mint")
+
+        return True
 
     def is_spl_token_transfer(self) -> bool:
-        return self.parsed["type"] in [
-            "transferChecked",
-            "transfer",
-        ] and self.is_program("spl-token")
+        if not (
+            self.is_program("spl-token")
+            and self.parsed["type"]
+            in [
+                "transferChecked",
+                "transfer",
+            ]
+        ):
+            return False
+        logger.debug(f"Is program spl-token and type {self.parsed['type']}")
+
+        if not self.info["amount"] == "1":
+            return False
+        logger.debug("Transferred amount 1")
+
+        return True
 
 
 class InnerInstruction(SafeDict):
@@ -130,7 +160,7 @@ class Transaction(BaseModel):
             slot=transaction["slot"],
             instructions=Instructions(transaction),
             *args,
-            **kwargs
+            **kwargs,
         )
 
 

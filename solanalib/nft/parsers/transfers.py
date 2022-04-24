@@ -21,44 +21,14 @@ def parse_transfer_type_transfer(
 
     """
 
-    def is_create(ix: OuterInstruction) -> bool:
-        if not (ix.is_program("spl-associated-token-account") and ix.is_type("create")):
-            return False
-        logger.debug("Is createNewTokenAccount")
-
-        if not ix.info["mint"] == mint:
-            return False
-        logger.debug("Is correct mint")
-
-        return True
-
-    def is_initializeAccount(ix: OuterInstruction) -> bool:
-        if not (ix.is_program("spl-token") and ix.is_type("initializeAccount")):
-            return False
-        logger.debug("Is initializeAccount")
-
-        if not ix.info["mint"] == mint:
-            return False
-        logger.debug("Is correct mint")
-
-        return True
-
-    def is_transfer(ix: OuterInstruction) -> bool:
-        if not (ix.is_program("spl-token") and ix.is_type("transfer")):
-            return False
-        logger.debug("Is transfer")
-
-        if not ix.info["amount"] == "1":
-            return False
-        logger.debug("Transferred amount 1")
-
-        return True
-
     def get_create_instruction_for_account(
         tx: Transaction, account: str
     ) -> Union[None, OuterInstruction]:
         for ix in tx.instructions.outer:
-            if is_create(ix) and ix.info["account"] == account:
+            if (
+                ix.is_create_associate_account_for_mint(mint)
+                and ix.info["account"] == account
+            ):
                 return ix
         return None
 
@@ -66,10 +36,12 @@ def parse_transfer_type_transfer(
     is_transfer_flag = False
 
     for ix in tx.instructions.outer:
-        if is_create(ix) or is_initializeAccount(ix):
+        if ix.is_create_associate_account_for_mint(
+            mint
+        ) or ix.is_initialize_account_for_mint(mint):
             is_create_flag = True
 
-        if is_transfer(ix):
+        if ix.is_spl_token_transfer():
             is_transfer_flag = True
             old_authority = ix.info["authority"]
             old_token_account = ix.info["source"]
