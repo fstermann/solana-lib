@@ -22,6 +22,11 @@ class Client:
         logger.debug(f"Payload: {payload}")
 
         response = requests.post(self.endpoint.url, json=payload)
+
+        logger.debug(f"Response status: {response.status_code}")
+        if response.status_code != 200:
+            logger.debug(response.text)
+
         json_response = response.json()
         return json_response
 
