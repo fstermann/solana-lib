@@ -2,12 +2,62 @@ from typing import Union
 
 from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
-from solanalib.nft.models import SaleActivity, Transaction
+from solanalib.nft.models import SaleActivity, Transaction, TransferActivity
+from solanalib.nft.parsers.transfers import parse_transfer
 
 from .util import get_me_lamports_price_from_data
 
 # TODO
 # acceptBid eg for MEV1 5g1CLoBX3RYR2YPqGZ3oP7YCN63V68SFm1WF6rTQ12Wfh7X2gYiYPD8R1eRN2ERs466qKYGnhdA6VGvgLrTtF3Qo
+
+
+def parse_sale_unknown(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
+    transfer_activity = parse_transfer(tx=tx, mint=mint)
+    if isinstance(transfer_activity, TransferActivity):
+        buyer = transfer_activity.new_authority
+        lamports_transfered = []
+
+        for index, ix in enumerate(tx.instructions.outer):
+            if (
+                ix.is_type("transfer")
+                and ix.is_type("system")
+                and ix.info["source"] == buyer
+            ):
+                lamports = ix.info["lamports"]
+                logger.debug(f"{buyer} paid {lamports}")
+                lamports_transfered.append(lamports)
+
+            if not ix.is_parsed:
+                logger.debug(f"Parsing Inner instruction {index}")
+                if not index in tx.instructions.inner:
+                    continue
+
+                for iix in tx.instructions.inner[index]:
+                    if (
+                        iix.is_type("transfer")
+                        and iix.is_program("system")
+                        and iix.info["source"] == buyer
+                    ):
+                        lamports = iix.info["lamports"]
+                        logger.debug(f"{buyer} paid {lamports}")
+                        lamports_transfered.append(lamports)
+
+        sale_price = sum(lamports_transfered)
+        logger.debug(f"Calculated price is {sale_price}")
+        if sale_price > 0:
+            return SaleActivity(
+                transaction_id=tx.transaction_id,
+                block_time=tx.block_time,
+                slot=tx.slot,
+                mint=mint,
+                new_authority=transfer_activity.new_authority,
+                old_authority=transfer_activity.old_authority,
+                new_token_account=transfer_activity.new_token_account,
+                old_token_account=transfer_activity.old_token_account,
+                price_lamports=sale_price,
+                program="unknown",
+            )
+    return None
 
 
 def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
@@ -126,6 +176,7 @@ def parse_sale(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
         "MagicEdenV2 Sale": parse_sale_mev2,
         "AuctionHouse": parse_sale_auction_house,
         "DigitalEyes": parse_sale_digital_eyes,
+        "unknown": parse_sale_unknown,
     }
 
     for marketplace, parser in to_parse.items():
