@@ -30,8 +30,8 @@ class Instruction(SafeDict):
     def get_authority(self) -> Union[str, None]:
         if "authority" in self.info:
             return self.info["authority"]
-        if "multisigAuthority" in self.info:
-            return self.info["multisigAuthority"]
+        # if "multisigAuthority" in self.info:
+        #     return self.info["multisigAuthority"]
 
         logger.debug("Authority not found in parsed tx")
         return None
@@ -90,6 +90,17 @@ class Instruction(SafeDict):
         if not self.info["mint"] == mint:
             return False
         logger.debug("Is correct mint")
+
+        return True
+
+    def is_close_account(self, account: str) -> bool:
+        if not (
+            self.is_program("spl-token")
+            and self.is_type("closeAccount")
+            and self.info["account"] == account
+        ):
+            return False
+        logger.debug("Is close account")
 
         return True
 
