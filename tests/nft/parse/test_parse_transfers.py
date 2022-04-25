@@ -92,7 +92,8 @@ class TestParseTransfers:
         assert activity.new_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
 
     def test_parse_transfer_inner_multisigAuthority(self, load_tx):
-        # Transfers once in inner, old owner is in mutlisig authority
+        # Transfers once in inner, transfer is signed by multisig
+        # previous owner receives sol from close account
         tx = load_tx("transfers", "inner_multisigAuthority")
         mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
         activity = parse_transfer(tx=tx, mint=mint)
@@ -104,7 +105,7 @@ class TestParseTransfers:
         assert (
             activity.new_token_account == "GXN4jrxPHhNzq4aWKixALSTtiZeg5AJUZXxbjUBQUZro"
         )
-        assert activity.old_authority == "F4ghBzHFNgJxV4wEQDchU5i7n4XWWMBSaq7CuswGiVsr"
+        assert activity.old_authority == "98ij8ZpzEN3qZcnrWCfFYu9BKPGJeAq8ziaVjfi5jBDc"
         assert activity.new_authority == "6Y7HG1cWWhgS1jiagpi5YQQLsmvuGsUTyt6ETcuERX3t"
 
     @mock.patch("solanalib.nft.parsers.transfers.Client.get_account_info")
@@ -129,7 +130,7 @@ class TestParseTransfers:
         assert (
             activity.new_token_account == "Ccuxg9SibF4eohijB5s9EvBxoSCEpVzLiQLG6B3Rih6m"
         )
-        assert activity.old_authority == "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw"
+        assert activity.old_authority == "EDa3CjCUGpCKGjpef9UkWLoyZ6LDwNuWvnRcZgSsbBRq"
         assert activity.new_authority == ""
 
     def test_parse_transfer_unknown(self, load_tx):

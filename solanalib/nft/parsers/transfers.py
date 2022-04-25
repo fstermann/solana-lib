@@ -20,7 +20,7 @@ def parse_transfer_type_transfer(
     def get_create_instruction_for_account(
         tx: Transaction, account: str
     ) -> OuterInstruction:
-        for ix in tx.instructions.outer:
+        for index, ix in enumerate(tx.instructions.outer):
             if (ix.is_create_associate_account_for_mint(mint)) and ix.info[
                 "account"
             ] == account:
@@ -32,6 +32,21 @@ def parse_transfer_type_transfer(
                 if (iix.is_create_associate_account_for_mint(mint)) and iix.info[
                     "account"
                 ] == account:
+                    return iix
+        return OuterInstruction()
+
+    def get_close_instruction_for_account(
+        tx: Transaction, account: str
+    ) -> OuterInstruction:
+        for index, ix in enumerate(tx.instructions.outer):
+            if ix.is_close_account(account):
+                return ix
+
+            if index not in tx.instructions.inner:
+                continue
+
+            for iix in tx.instructions.inner[index]:
+                if iix.is_close_account(account):
                     return iix
         return OuterInstruction()
 
@@ -153,15 +168,37 @@ def parse_transfer_type_transfer(
         logger.debug(f"Didn't find authority for token account {new_token_account}")
         return ""
 
+    def get_old_authority_of_token_account(
+        old_token_account: str, transfer_ix: Instruction
+    ):
+        logger.debug(f"Checking old authority for token account {old_token_account}")
+        old_authority = transfer_ix.get_authority()
+        if old_authority:
+            logger.debug(f"Found old_authority by authority {old_authority}")
+            return old_authority
+
+        close_ix = get_close_instruction_for_account(tx, old_token_account)
+        if close_ix:
+            # The wallet that receives leftover SOL from token account
+            old_authority = close_ix.info["destination"]
+            logger.debug(f"Found old_authority by close instruction {old_authority}")
+            return old_authority
+
+        logger.debug(f"Didn't find authority for token account {old_token_account}")
+        return ""
+
     transfers = []
 
     for index, ix in enumerate(tx.instructions.outer):
         logger.debug(f"Parsing Outer instruction {index}")
         if ix.is_spl_token_transfer():
             # Mint is transfered
-            old_authority = ix.get_authority()
             old_token_account = ix.info["source"]
             new_token_account = ix.info["destination"]
+
+            old_authority = get_old_authority_of_token_account(
+                old_token_account=old_token_account, transfer_ix=ix
+            )
 
             # If the new token_account is created in the tx, find the create ix.
             new_authority = get_new_authority_of_token_account(
@@ -196,9 +233,12 @@ def parse_transfer_type_transfer(
             for iix in tx.instructions.inner[index]:
                 if iix.is_spl_token_transfer():
                     # mint is transfered
-                    old_authority = iix.get_authority()
                     old_token_account = iix.info["source"]
                     new_token_account = iix.info["destination"]
+
+                    old_authority = get_old_authority_of_token_account(
+                        old_token_account=old_token_account, transfer_ix=iix
+                    )
 
                     # If the new token_account is created in the tx, find the create ix.
                     new_authority = get_new_authority_of_token_account(

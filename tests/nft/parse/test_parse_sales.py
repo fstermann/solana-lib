@@ -118,3 +118,19 @@ class TestParseSale:
         assert activity.program == MagicEdenV2.MARKETPLACE
         assert activity.new_authority == "Fqgd53Bg9GcDAppzcipZfRFr7dEWF7TsqEPNuVwc7u6Y"
         assert activity.old_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
+
+    def test_parse_sale_unknown_01(self, load_tx):
+        tx = load_tx("sales", "unknown_01")
+        mint = "9qtHrZYC1xBCT8BHxmHMwRjDnmvZCFhRQbDBWAHxPN5n"
+        activity = parse_sale(tx=tx, mint=mint)
+        assert isinstance(activity, SaleActivity)
+        assert (
+            activity.new_token_account == "7nwtmNGKs9nWgHX8aLEoXWpxcuz1nzwv2Yy7YYifLLDQ"
+        )
+        assert (
+            activity.old_token_account == "8HQvGtcjVd8w4usxjMKwCg7n7dnJWgKPqrGcuGGP6gKG"
+        )
+        assert activity.price_lamports == 10000000000
+        assert activity.program == "unknown"
+        assert activity.new_authority == "5LQPpBs532SZbPMgjW8M3mBv8kRz7D8F8Pch53zfzdb3"
+        assert activity.old_authority == "2oNrsGicfpPMp8iBzkAh9zLHMYWHBb3jQw1npht4LoEb"
