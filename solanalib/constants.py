@@ -14,6 +14,7 @@ class MagicEdenV1(str, Enum):
     DELISTING_INSTRUCTION = "TE6axTojnp"
     LISTING_INSTRUCTION = "2RD37fomjE"
     SALE_INSTRUCTION = "3UjLyJvuY4"
+    ACCEPT_BID_INSTRUCTION = "RJ7YoBrhBj"
     MARKETPLACE = Marketplace.MAGIC_EDEN_V1.value
 
 

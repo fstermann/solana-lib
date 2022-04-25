@@ -46,6 +46,20 @@ class TestParseSale:
         assert activity.new_authority == "2BxaLJ7HKgjRE48izSx6o5BBGr5hMn4khvH2Jhv1wVM9"
         assert activity.old_authority == "2LyE4jjMmdU1r1nHkrHuFZ6ND51LZzYWoKN3H8YFzBgA"
 
+    def test_parse_sale_mev1_accept_bid_01(self, load_tx):
+        tx = load_tx("sales", "mev1_accept_bid_01")
+        mint = "Ge2L2Bt8CPsVEFRZBKSu5dCnz746i7ukbBCpAsPv44VL"
+        activity = parse_sale(tx=tx, mint=mint)
+        assert isinstance(activity, SaleActivity)
+        assert activity.mint == mint
+        assert (
+            activity.new_token_account == "BEPURPfP9LbAypFaDVVEf9KzXAoVmFA9SahdqcVJPvB"
+        )
+        assert activity.price_lamports == 6500000000
+        assert activity.program == MagicEdenV1.MARKETPLACE
+        assert activity.new_authority == "3n7c3AoQP75hdeJBS43D3rucuj4MSPQt1RWommbxrR8G"
+        assert activity.old_authority == "7JvFNAjVNXN9aABtgggELpQr7UreL5i3AtjhzTWcNcTo"
+
     def test_parse_sale_mev2_01(self, load_tx):
         tx = load_tx("sales", "mev2_01")
         mint = "Bvn2AsrHX2g2SVH3ByRRhK2qbCDeH1jUmJSWVPzrob5Q"
