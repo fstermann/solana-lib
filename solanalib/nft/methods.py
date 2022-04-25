@@ -67,7 +67,9 @@ def get_mint_activites_for_token_account(
 ) -> List[Activity]:
     transactions = client.get_all_parsed_transactions_for_address(account=token_account)
     txs = [
-        NFTTransaction(mint=token_mint, transaction=tx["result"]) for tx in transactions
+        NFTTransaction(mint=token_mint, transaction=tx["result"])
+        for tx in transactions
+        if not tx["result"]["meta"]["err"]
     ]
     activities = parse_all_transactions(transactions=txs)
     return activities
