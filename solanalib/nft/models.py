@@ -154,14 +154,19 @@ class Instructions(BaseModel):
     inner: Dict[int, List[InnerInstruction]]
 
     def __init__(self, transaction: dict):
+        outer_ix = transaction["transaction"]["message"]["instructions"]
+        if not outer_ix:
+            outer_ix = []
+
+        inner_ix = transaction["meta"]["innerInstructions"]
+        if not inner_ix:
+            inner_ix = []
+
         super().__init__(
-            outer=[
-                OuterInstruction(ix)
-                for ix in transaction["transaction"]["message"]["instructions"]
-            ],
+            outer=[OuterInstruction(ix) for ix in outer_ix],
             inner={
                 ix["index"]: [InnerInstruction(iix) for iix in ix["instructions"]]
-                for ix in transaction["meta"]["innerInstructions"]
+                for ix in inner_ix
             },
         )
 
