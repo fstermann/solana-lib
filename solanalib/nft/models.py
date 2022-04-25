@@ -173,7 +173,7 @@ class Transaction(BaseModel):
     instructions: Instructions
     pre_token_balances: List[SafeDict]
     post_token_balances: List[SafeDict]
-    accounts: List[SafeDict]
+    accounts: Dict[int, SafeDict]
 
     def __init__(self, transaction: dict, *args, **kwargs):
         super().__init__(
@@ -187,29 +187,58 @@ class Transaction(BaseModel):
             post_token_balances=[
                 SafeDict(bal) for bal in transaction["meta"]["postTokenBalances"]
             ],
-            accounts=[
-                SafeDict(acc)
-                for acc in transaction["transaction"]["message"]["accountKeys"]
-            ],
+            accounts={
+                index: SafeDict(acc)
+                for index, acc in enumerate(
+                    transaction["transaction"]["message"]["accountKeys"]
+                )
+            },
             *args,
             **kwargs,
         )
 
-    def get_pre_owner(self, mint: str):
+    def get_account(self, index):
+        if index in self.accounts:
+            return self.accounts[index]["pubkey"]
+
+    def get_owner(self, token_balance: SafeDict):
+        if "owner" in token_balance:
+            return token_balance["owner"]
+        if "accountIndex" in token_balance:
+            return self.get_account(token_balance["accountIndex"])
+        return None
+
+    def get_pre_owner(self, mint: str) -> Union[str, None]:
         for token_balance in self.pre_token_balances:
             if (
                 token_balance["mint"] == mint
                 and token_balance["uiTokenAmount"]["amount"] == "1"
             ):
-                return token_balance["owner"]
+                return self.get_owner(token_balance)
+        return None
 
-    def get_post_owner(self, mint: str):
+    def get_all_pre_owners(self, mint: str) -> List:
+        owners = []
+        for token_balance in self.pre_token_balances:
+            if token_balance["mint"] == mint:
+                owners.append(self.get_owner(token_balance))
+        return owners
+
+    def get_post_owner(self, mint: str) -> Union[str, None]:
         for token_balance in self.post_token_balances:
             if (
                 token_balance["mint"] == mint
                 and token_balance["uiTokenAmount"]["amount"] == "1"
             ):
-                return token_balance["owner"]
+                return self.get_owner(token_balance)
+        return None
+
+    def get_all_post_owners(self, mint: str) -> List:
+        owners = []
+        for token_balance in self.post_token_balances:
+            if token_balance["mint"] == mint:
+                owners.append(self.get_owner(token_balance))
+        return owners
 
 
 class NFTTransaction(Transaction):

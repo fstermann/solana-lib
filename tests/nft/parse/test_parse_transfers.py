@@ -131,3 +131,19 @@ class TestParseTransfers:
         )
         assert activity.old_authority == "4pUQS4Jo2dsfWzt3VgHXy3H6RYnEDd11oWPiaM2rdAPw"
         assert activity.new_authority == ""
+
+    def test_parse_transfer_unknown(self, load_tx):
+        # Transfers unknown
+        tx = load_tx("transfers", "unknown")
+        mint = "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck"
+        activity = parse_transfer(tx=tx, mint=mint)
+
+        assert isinstance(activity, TransferActivity)
+
+    def test_parse_transfer_unknown02(self, load_tx):
+        # Transfers unknown
+        tx = load_tx("transfers", "unknown02")
+        mint = "4mSvhZ4CCWixrYkwHjL6yVCoURn2U8xoXN7zbpakzMck"
+        activity = parse_transfer(tx=tx, mint=mint)
+
+        assert isinstance(activity, TransferActivity)

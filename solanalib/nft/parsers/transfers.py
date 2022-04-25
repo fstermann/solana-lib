@@ -10,6 +10,8 @@ from solanalib.nft.models import (
 )
 from solanalib.rpc.client import Client
 from solanalib.util import SafeDict
+from spl.token.instructions import get_associated_token_address
+from solana.publickey import PublicKey
 
 
 def parse_transfer_type_transfer(
@@ -68,8 +70,10 @@ def parse_transfer_type_transfer(
 
         return ixs
 
-    def check_mint(ix: Instruction, new_token_account: str):
-        logger.debug(f"Checking mint for token account {new_token_account}")
+    def check_mint(ix: Instruction, new_token_account: str, new_authority: str):
+        logger.debug(
+            f"Checking mint for token account {new_token_account} and authority {new_authority}"
+        )
         if ix.info["mint"] == mint:
             return True
 
@@ -79,6 +83,22 @@ def parse_transfer_type_transfer(
 
         init_ix = get_init_instruction_for_account(tx, new_token_account)
         if init_ix:
+            return True
+
+        if new_authority:
+            authority_mint_token_account = str(
+                get_associated_token_address(
+                    owner=PublicKey(new_authority), mint=PublicKey(mint)
+                )
+            )
+            if authority_mint_token_account == new_token_account:
+                return True
+
+        post_owners = tx.get_all_post_owners(mint)
+        if new_token_account in post_owners:
+            logger.debug(
+                f"Token account {new_token_account} is owner or has owned the mint"
+            )
             return True
 
         client = Client()
@@ -102,6 +122,18 @@ def parse_transfer_type_transfer(
             init_ix = get_init_instruction_for_account(tx, new_token_account)
             if init_ix:
                 new_authority = init_ix.info["owner"]
+
+        # Check the post_token_balance
+        for post_owner in tx.get_all_post_owners(mint):
+            if post_owner:
+                post_token_account = str(
+                    get_associated_token_address(
+                        owner=PublicKey(post_owner), mint=PublicKey(mint)
+                    )
+                )
+                if post_token_account == new_token_account:
+                    logger.debug(f"Found new authority by pda: {post_owner}")
+                    new_authority = post_owner
 
         if not new_authority:
             logger.debug(f"Didn't find authority for token account {new_token_account}")
@@ -131,15 +163,17 @@ def parse_transfer_type_transfer(
             old_token_account = ix.info["source"]
             new_token_account = ix.info["destination"]
 
-            # Check if correct mint is transfered
-            if not check_mint(ix=ix, new_token_account=new_token_account):
-                continue
-
             # If the new token_account is created in the tx, find the create ix.
             new_authority = get_new_authority_of_token_account(
                 new_token_account=new_token_account
             )
             logger.debug(f"New authority: {new_authority}")
+
+            # Check if correct mint is transfered
+            if not check_mint(
+                ix=ix, new_token_account=new_token_account, new_authority=new_authority
+            ):
+                continue
 
             transfers.append(
                 TransferActivity(
@@ -166,15 +200,19 @@ def parse_transfer_type_transfer(
                     old_token_account = iix.info["source"]
                     new_token_account = iix.info["destination"]
 
-                    # Check if correct mint is transfered
-                    if not check_mint(ix=iix, new_token_account=new_token_account):
-                        continue
-
                     # If the new token_account is created in the tx, find the create ix.
                     new_authority = get_new_authority_of_token_account(
-                        new_token_account=new_token_account
+                        new_token_account=new_token_account,
                     )
                     logger.debug(f"New authority: {new_authority}")
+
+                    # Check if correct mint is transfered
+                    if not check_mint(
+                        ix=iix,
+                        new_token_account=new_token_account,
+                        new_authority=new_authority,
+                    ):
+                        continue
 
                     transfers.append(
                         TransferActivity(
