@@ -15,13 +15,14 @@ class Client:
 
     def __init__(self, endpoint: Union[Endpoint, str] = Endpoint.DEFAULT):
         self.endpoint = endpoint
+        self.session = requests.Session()
         self.method_builder = MethodBuilder()
 
     def _make_request(self, payload):
         logger.debug(f"Making request to {self.endpoint.url}")
         logger.debug(f"Payload: {payload}")
 
-        response = requests.post(self.endpoint.url, json=payload)
+        response = self.session.post(self.endpoint.url, json=payload)
 
         logger.debug(f"Response status: {response.status_code}")
         if response.status_code != 200:
