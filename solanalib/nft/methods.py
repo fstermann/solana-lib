@@ -24,6 +24,7 @@ def get_collection_activities(creator_address):
 def get_mint_activities(
     token_mint: PublicKey, client: ProClient = ProClient()
 ) -> List[Activity]:
+    logger.debug(f"Fetching current token account for mint {token_mint}")
     current_token_account = get_current_token_account(
         token_mint=token_mint, client=client
     )
