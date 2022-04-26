@@ -1,4 +1,3 @@
-import json
 from typing import List, Union
 
 import requests
@@ -20,7 +19,11 @@ class Client:
 
     def _make_request(self, payload):
         logger.debug(f"Making request to {self.endpoint.url}")
-        logger.debug(f"Payload: {payload}")
+        payload_string = f"{str(payload)[:10]}...{str(payload)[-10:]}"
+        payload_len = len(payload) if isinstance(payload, list) else 1
+        logger.debug(
+            f"Payload ({payload_len} call{'' if payload_len == 1 else 's'}): {payload_string}"
+        )
 
         response = self.session.post(self.endpoint.url, json=payload)
 
