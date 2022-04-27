@@ -14,8 +14,16 @@ class AccountInfo(SafeDict):
         return self["result"]["value"] is not None
 
     @property
+    def parsed(self) -> SafeDict:
+        return self["result"]["value"]["data"]["parsed"]
+
+    @property
+    def info(self) -> SafeDict:
+        return self.parsed["info"]
+
+    @property
     def mint(self):
-        return self["result"]["value"]["data"]["parsed"]["info"]["mint"]
+        return self.info["mint"]
 
 
 class Instruction(SafeDict):
