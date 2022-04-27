@@ -13,9 +13,9 @@ def get_me_lamports_price_from_data(data, program):
     hex_data = base58.b58decode(data).hex()
 
     program2index = {
-        MagicEdenV1.PROGRAM: slice(16, 26),
-        MagicEdenV2.PROGRAM: slice(20, 30),
-        AuctionHouse.PROGRAM: slice(22, 32),
+        MagicEdenV1.PROGRAM: slice(16, 32),
+        MagicEdenV2.PROGRAM: slice(20, 36),
+        AuctionHouse.PROGRAM: slice(22, 38),
     }
 
     if program not in program2index:
