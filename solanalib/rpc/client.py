@@ -4,7 +4,7 @@ import requests
 
 from .endpoints import Endpoint
 from .methods import MethodBuilder
-from .parameter import Commitment, Encoding
+from .parameter import Commitment, Encoding, TransactionDetails
 from solanalib.logger import logger
 
 
@@ -103,6 +103,23 @@ class Client:
         payload = self.method_builder.get_account_info(
             account=account,
             encoding=encoding,
+            commitment=commitment,
+        )
+        return self._make_request(payload)
+
+    def get_block(
+        self,
+        slot: int,
+        encoding: Encoding = Encoding.JSON_PARSED,
+        transaction_details: TransactionDetails = TransactionDetails.FULL,
+        rewards: bool = True,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        payload = self.method_builder.get_block(
+            slot=slot,
+            encoding=encoding,
+            transaction_details=transaction_details,
+            rewards=rewards,
             commitment=commitment,
         )
         return self._make_request(payload)

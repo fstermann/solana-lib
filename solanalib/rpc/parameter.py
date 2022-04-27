@@ -10,3 +10,9 @@ class Encoding(Enum):
 
 class Commitment(Enum):
     FINALIZED = "finalized"
+
+
+class TransactionDetails(Enum):
+    FULL = "full"
+    SIGNATURES = "signatures"
+    NONE = "none"

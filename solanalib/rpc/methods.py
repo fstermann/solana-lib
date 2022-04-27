@@ -1,4 +1,4 @@
-from solanalib.rpc.parameter import Encoding, Commitment
+from solanalib.rpc.parameter import Encoding, Commitment, TransactionDetails
 import functools
 
 
@@ -88,6 +88,26 @@ class MethodBuilder:
             account,
             {
                 "encoding": encoding.value,
+                "commitment": commitment.value,
+            },
+        ]
+        return params
+
+    @payload(method="getBlock")
+    def get_block(
+        self,
+        slot: int,
+        encoding: Encoding = Encoding.JSON_PARSED,
+        transaction_details: TransactionDetails = TransactionDetails.FULL,
+        rewards: bool = True,
+        commitment: Commitment = Commitment.FINALIZED,
+    ):
+        params = [
+            slot,
+            {
+                "encoding": encoding.value,
+                "transaction_details": transaction_details.value,
+                "rewards": rewards,
                 "commitment": commitment.value,
             },
         ]
