@@ -39,6 +39,9 @@ class Transaction(BaseModel):
             **kwargs,
         )
 
+    def __hash__(self):
+        return hash(self.transaction_id)
+
     def parse_ixs(
         self, parser: Callable, with_inner: Optional[bool] = False
     ) -> Union[Activity, None]:
