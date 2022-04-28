@@ -1,15 +1,13 @@
 from typing import Union
 
-from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
 from solanalib.nft.activities import SaleActivity, TransferActivity
+from solanalib.nft.instructions import Instruction
+from solanalib.nft.marketplaces import marketplaces
 from solanalib.nft.parsers.transfers import parse_transfer
 from solanalib.nft.transaction import Transaction
 
 from .util import get_me_lamports_price_from_data
-
-# TODO
-# acceptBid eg for MEV1 5g1CLoBX3RYR2YPqGZ3oP7YCN63V68SFm1WF6rTQ12Wfh7X2gYiYPD8R1eRN2ERs466qKYGnhdA6VGvgLrTtF3Qo
 
 
 def parse_sale_unknown(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
@@ -62,102 +60,115 @@ def parse_sale_unknown(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
 
 
 def parse_sale_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
-    sale_price = None
-    new_token_account = None
+    def parse_ix(ix: Instruction) -> Union[SaleActivity, None]:
+        marketplace = marketplaces.magic_eden_v1
 
-    for ix in tx.instructions.outer:
-        if not ix.is_program_id(MagicEdenV1.PROGRAM):
-            continue
-        logger.debug(f"Program is {MagicEdenV1.NAME}")
-        marketplace = MagicEdenV1.MARKETPLACE
+        if not ix.is_program_id(marketplace.program):
+            return None
+        logger.debug(f"Program is {marketplace.name}")
 
-        if ix.data[0:10] == MagicEdenV1.SALE_INSTRUCTION:
-            logger.debug("Is Sale instruction")
-            new_authority = ix["accounts"][0]  # 1st account
-            old_authority = ix["accounts"][2]  # 3rd account
-            new_token_account = ix["accounts"][1]  # 2nd account
+        if not ix.data[0:10] == marketplace.instructions.sale.base64_prefix:
+            return None
+        logger.debug("Is Sale instruction")
 
-            sale_price = get_me_lamports_price_from_data(ix.data, MagicEdenV1.PROGRAM)
+        account_indices = marketplace.instructions.sale.account_indices
 
-            return SaleActivity(
-                transaction_id=tx.transaction_id,
-                block_time=tx.block_time,
-                slot=tx.slot,
-                mint=mint,
-                new_authority=new_authority,
-                old_authority=old_authority,
-                new_token_account=new_token_account,
-                old_token_account=new_token_account,  # In V1, MagicEden just transfers authority for new token account
-                price_lamports=sale_price,
-                program=marketplace,
-            )
-    return None
+        old_authority = ix["accounts"][account_indices.old_authority]
+        new_authority = ix["accounts"][account_indices.new_authority]
+        old_token_account = ix["accounts"][account_indices.old_token_account]
+
+        mint = tx.get_mint_by_accounts(old_authority, new_authority, old_token_account)
+        price_lamports = get_me_lamports_price_from_data(ix.data, marketplace.program)
+
+        return SaleActivity(
+            transaction_id=tx.transaction_id,
+            block_time=tx.block_time,
+            slot=tx.slot,
+            mint=mint,
+            new_authority=new_authority,
+            old_authority=old_authority,
+            new_token_account=old_token_account,
+            old_token_account=old_token_account,  # In V1, MagicEden just transfers authority for new token account
+            price_lamports=price_lamports,
+            program=marketplace.name,
+        )
+
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_accept_bid_mev1(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
-    sale_price = None
-    new_token_account = None
+    def parse_ix(ix: Instruction) -> Union[SaleActivity, None]:
+        marketplace = marketplaces.magic_eden_v1
 
-    for ix in tx.instructions.outer:
-        if not ix.is_program_id(MagicEdenV1.PROGRAM):
-            continue
-        logger.debug(f"Program is {MagicEdenV1.NAME}")
-        marketplace = MagicEdenV1.MARKETPLACE
+        if not ix.is_program_id(marketplace.program):
+            return None
+        logger.debug(f"Program is {marketplace.name}")
 
-        if ix.data[0:10] == MagicEdenV1.ACCEPT_BID_INSTRUCTION:
-            logger.debug("Is AcceptBid instruction")
-            old_authority = ix["accounts"][0]
-            new_authority = ix["accounts"][1]
-            new_token_account = ix["accounts"][2]
+        if not ix.data[0:10] == marketplace.instructions.accept_bid.base64_prefix:
+            return None
+        logger.debug("Is AcceptBid instruction")
 
-            sale_price = get_me_lamports_price_from_data(ix.data, MagicEdenV1.PROGRAM)
+        account_indices = marketplace.instructions.accept_bid.account_indices
 
-            return SaleActivity(
-                transaction_id=tx.transaction_id,
-                block_time=tx.block_time,
-                slot=tx.slot,
-                mint=mint,
-                new_authority=new_authority,
-                old_authority=old_authority,
-                new_token_account=new_token_account,
-                old_token_account=new_token_account,  # In V1, MagicEden just transfers authority for new token account
-                price_lamports=sale_price,
-                program=marketplace,
-            )
-    return None
+        old_authority = ix["accounts"][account_indices.old_authority]
+        new_authority = ix["accounts"][account_indices.new_authority]
+        old_token_account = ix["accounts"][account_indices.old_token_account]
+
+        mint = tx.get_mint_by_accounts(old_authority, new_authority, old_token_account)
+        price_lamports = get_me_lamports_price_from_data(ix.data, marketplace.program)
+
+        return SaleActivity(
+            transaction_id=tx.transaction_id,
+            block_time=tx.block_time,
+            slot=tx.slot,
+            mint=mint,
+            new_authority=new_authority,
+            old_authority=old_authority,
+            new_token_account=old_token_account,
+            old_token_account=old_token_account,  # In V1, MagicEden just transfers authority for new token account
+            price_lamports=price_lamports,
+            program=marketplace.name,
+        )
+
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_sale_mev2(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
-    sale_price = None
-    new_token_account = None
+    def parse_ix(ix: Instruction) -> Union[SaleActivity, None]:
+        marketplace = marketplaces.magic_eden_v2
 
-    for ix in tx.instructions.outer:
-        if not ix.is_program_id(MagicEdenV2.PROGRAM):
-            continue
-        logger.debug(f"Program is {MagicEdenV2.NAME}")
-        marketplace = MagicEdenV2.MARKETPLACE
+        if not ix.is_program_id(marketplace.program):
+            return None
+        logger.debug(f"Program is {marketplace.name}")
 
-        if ix.data[0:10] == MagicEdenV2.SALE_INSTRUCTION:
-            logger.debug("Is Sale instruction")
-            new_authority = ix["accounts"][0]  # 1st account
-            old_authority = ix["accounts"][1]  # 2nd account
-            new_token_account = ix["accounts"][7]  # 8th account
-            old_token_account = ix["accounts"][3]  # 4th account
-            sale_price = get_me_lamports_price_from_data(ix.data, MagicEdenV2.PROGRAM)
+        if not ix.data[0:10] == marketplace.instructions.sale.base64_prefix:
+            return None
+        logger.debug("Is Sale instruction")
 
-            return SaleActivity(
-                transaction_id=tx.transaction_id,
-                block_time=tx.block_time,
-                slot=tx.slot,
-                mint=mint,
-                new_authority=new_authority,
-                old_authority=old_authority,
-                new_token_account=new_token_account,
-                old_token_account=old_token_account,
-                price_lamports=sale_price,
-                program=marketplace,
-            )
-    return None
+        account_indices = marketplace.instructions.sale.account_indices
+
+        mint = ix["accounts"][account_indices.mint]
+        old_authority = ix["accounts"][account_indices.old_authority]
+        new_authority = ix["accounts"][account_indices.new_authority]
+        old_token_account = ix["accounts"][account_indices.old_token_account]
+        new_token_account = ix["accounts"][account_indices.new_token_account]
+
+        price_lamports = get_me_lamports_price_from_data(ix.data, marketplace.program)
+
+        return SaleActivity(
+            transaction_id=tx.transaction_id,
+            block_time=tx.block_time,
+            slot=tx.slot,
+            mint=mint,
+            new_authority=new_authority,
+            old_authority=old_authority,
+            new_token_account=new_token_account,
+            old_token_account=old_token_account,
+            price_lamports=price_lamports,
+            program=marketplace.name,
+        )
+
+    return tx.parse_ixs(parse_ix)
 
 
 # TODO

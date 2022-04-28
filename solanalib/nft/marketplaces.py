@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from pydantic import BaseModel
 
@@ -21,6 +21,7 @@ class Instructions(BaseModel):
     delisting: Instruction
     listing: Instruction
     sale: Instruction
+    accept_bid: Optional[Instruction]
 
 
 class Marketplace(BaseModel):

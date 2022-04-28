@@ -36,6 +36,17 @@
           "new_token_account": 1,
           "old_token_account": 1
         }
+      },
+      "accept_bid": {
+        "base64_prefix": "RJ7YoBrhBj",
+        "hex_prefix": "",
+        "account_indices": {
+          "mint": null,
+          "new_authority": 1,
+          "old_authority": 0,
+          "new_token_account": 2,
+          "old_token_account": 2
+        }
       }
     }
   },
