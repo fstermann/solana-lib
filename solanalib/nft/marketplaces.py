@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from pydantic import BaseModel
 
@@ -37,5 +37,3 @@ class Marketplaces(BaseModel):
 
 
 marketplaces = Marketplaces.parse_file("conf/marketplaces.json")
-
-print(marketplaces)
