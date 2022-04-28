@@ -5,10 +5,10 @@ from pydantic import BaseModel
 
 class AccountIndices(BaseModel):
     mint: Union[int, None]
-    new_authority: int
-    old_authority: int
-    new_token_account: int
-    old_token_account: int
+    new_authority: Union[int, None]
+    old_authority: Union[int, None]
+    new_token_account: Union[int, None]
+    old_token_account: Union[int, None]
 
 
 class Instruction(BaseModel):

@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 
 from pydantic import BaseModel
 
@@ -16,7 +17,7 @@ class Activity(BaseModel):
     transaction_id: str
     block_time: int
     slot: int
-    mint: str = None
+    mint: Union[str, None] = None
     old_token_account: str = None
     new_token_account: str = None
     old_authority: str = None  # -> old_authority, transfered from
