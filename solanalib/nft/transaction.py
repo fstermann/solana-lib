@@ -40,6 +40,15 @@ class Transaction(BaseModel):
             **kwargs,
         )
 
+    def get_mint_by_accounts(self, *args) -> Union[str, None]:
+        for token_balance in self.pre_token_balances:
+            if self.get_owner(token_balance) in args:
+                return token_balance["mint"]
+        for token_balance in self.post_token_balances:
+            if self.get_owner(token_balance) in args:
+                return token_balance["mint"]
+        return None
+
     def get_account(self, index):
         if index in self.accounts:
             return self.accounts[index]["pubkey"]
