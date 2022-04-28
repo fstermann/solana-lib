@@ -1,6 +1,7 @@
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel
+from solanalib.logger import logger
 from solanalib.nft.activities import Activity
 from solanalib.util import SafeDict
 
@@ -38,11 +39,26 @@ class Transaction(BaseModel):
             **kwargs,
         )
 
-    def parse_outer_ixs(self, parser: Callable) -> Union[Activity, None]:
-        for ix in self.instructions.outer:
+    def parse_ixs(
+        self, parser: Callable, with_inner: Optional[bool] = False
+    ) -> Union[Activity, None]:
+        for index, ix in enumerate(self.instructions.outer):
             activity = parser(ix=ix)
             if activity:
                 return activity
+
+            if not with_inner:
+                continue
+            if ix.is_parsed:
+                continue
+            if not index in self.instructions.inner:
+                continue
+
+            for iix in self.instructions.inner[index]:
+                activity = parser(ix=iix)
+                if activity:
+                    return activity
+
         return None
 
     def get_mint_by_accounts(self, *args) -> Union[str, None]:
