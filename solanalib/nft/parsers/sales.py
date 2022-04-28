@@ -192,7 +192,7 @@ def parse_sale(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
     }
 
     for marketplace, parser in to_parse.items():
-        logger.info(f"Checking marketplace {marketplace}")
+        logger.debug(f"Checking marketplace {marketplace}")
         activity = parser(tx=tx, mint=mint)
         if activity:
             return activity

@@ -93,7 +93,7 @@ def parse_mint(tx: Transaction, mint: str) -> Union[MintActivity, None]:
     }
 
     for marketplace, parser in to_parse.items():
-        logger.info(f"Checking mint-program {marketplace}")
+        logger.debug(f"Checking mint-program {marketplace}")
         activity = parser(tx=tx)
         if activity:
             return activity

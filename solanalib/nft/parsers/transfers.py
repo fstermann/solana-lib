@@ -319,11 +319,10 @@ def parse_transfer(tx: Transaction, mint: str) -> Union[TransferActivity, None]:
     to_parse = {
         "transferChecked": parse_transfer_type_transferChecked,
         "transfer": parse_transfer_type_transfer,
-        # "unknown": parse_transfer_type_unknown,
     }
 
     for transfer_type, parser in to_parse.items():
-        logger.info(f"Checking for transfer type {transfer_type}")
+        logger.debug(f"Checking for transfer type {transfer_type}")
         activity = parser(tx=tx, mint=mint)
         if activity:
             return activity

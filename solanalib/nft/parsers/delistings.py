@@ -84,7 +84,7 @@ def parse_delisting(tx: Transaction, mint: str):
     }
 
     for marketplace, parser in to_parse.items():
-        logger.info(f"Checking marketplace {marketplace}")
+        logger.debug(f"Checking marketplace {marketplace}")
         activity = parser(tx=tx)
         if activity:
             return activity
