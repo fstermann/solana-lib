@@ -1,11 +1,9 @@
-from enum import Enum
-from lib2to3.pgen2 import token
-from typing import Dict, List, Union
+from typing import Callable, Dict, List, Union
 
 from pydantic import BaseModel
-from solanalib.constants import Marketplace
+from solanalib.nft.activities import Activity
 from solanalib.util import SafeDict
-from solanalib.logger import logger
+
 from .instructions import Instructions
 
 
@@ -40,6 +38,13 @@ class Transaction(BaseModel):
             **kwargs,
         )
 
+    def parse_outer_ixs(self, parser: Callable) -> Union[Activity, None]:
+        for ix in self.instructions.outer:
+            activity = parser(ix=ix)
+            if activity:
+                return activity
+        return None
+
     def get_mint_by_accounts(self, *args) -> Union[str, None]:
         for token_balance in self.pre_token_balances:
             if self.get_owner(token_balance) in args:
@@ -48,6 +53,10 @@ class Transaction(BaseModel):
             if self.get_owner(token_balance) in args:
                 return token_balance["mint"]
         return None
+
+    @property
+    def account_keys(self):
+        return [account["pubkey"] for account in self.accounts.values()]
 
     def get_account(self, index):
         if index in self.accounts:

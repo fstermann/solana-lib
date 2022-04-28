@@ -2,48 +2,51 @@ from typing import Union
 
 from solanalib.constants import Metaplex
 from solanalib.logger import logger
-from solanalib.nft.transaction import Transaction
 from solanalib.nft.activities import MintActivity
+from solanalib.nft.instructions import Instruction
+from solanalib.nft.transaction import Transaction
 
 
 def parse_mint_other(tx: Transaction, mint: str) -> Union[MintActivity, None]:
-    for ix in tx.instructions.outer:
-        if ix.is_mint(mint):
-            logger.debug("Is correct mint tx")
-            new_authority = ix.info["mintAuthority"]
-            new_token_account = ix.info["account"]
-            program = ix["program"]
+    def parse_ix(ix: Instruction):
+        if not ix.is_mint_ix:
+            return None
+        logger.debug("Is mint ix")
 
-            return MintActivity(
-                transaction_id=tx.transaction_id,
-                block_time=tx.block_time,
-                slot=tx.slot,
-                mint=mint,
-                new_authority=new_authority,
-                new_token_account=new_token_account,
-                program=program,
-            )
-    return None
+        mint = ix.info["mint"]
+        new_authority = ix.info["mintAuthority"]
+        new_token_account = ix.info["account"]
+        program = ix["program"]
+
+        return MintActivity(
+            transaction_id=tx.transaction_id,
+            block_time=tx.block_time,
+            slot=tx.slot,
+            mint=mint,
+            new_authority=new_authority,
+            new_token_account=new_token_account,
+            program=program,
+        )
+
+    return tx.parse_outer_ixs(parse_ix)
 
 
 def parse_mint_candy_machine_v1(
     tx: Transaction, mint: str
 ) -> Union[MintActivity, None]:
-    is_candy_machine_v2 = False
-    is_mint = False
+    def parse_ix(ix: Instruction):
+        if not ix.is_mint_ix:
+            return None
+        logger.debug("Is mint ix")
 
-    for ix in tx.instructions.outer:
-        if ix.is_program_id(Metaplex.CANDY_MACHINE_V1):
-            is_candy_machine_v2 = True
-            logger.debug("Program is CandyMachineV1")
+        if not Metaplex.CANDY_MACHINE_V1 in tx.account_keys:
+            return None
+        logger.debug("Program is CandyMachineV1")
 
-        if ix.is_mint(mint):
-            is_mint = True
-            logger.debug("Is correct mint tx")
-            new_authority = ix.info["mintAuthority"]
-            new_token_account = ix.info["account"]
+        mint = ix.info["mint"]
+        new_authority = ix.info["mintAuthority"]
+        new_token_account = ix.info["account"]
 
-    if is_candy_machine_v2 and is_mint:
         return MintActivity(
             transaction_id=tx.transaction_id,
             block_time=tx.block_time,
@@ -53,27 +56,26 @@ def parse_mint_candy_machine_v1(
             new_token_account=new_token_account,
             program="CandyMachineV1",
         )
-    return None
+
+    return tx.parse_outer_ixs(parse_ix)
 
 
 def parse_mint_candy_machine_v2(
     tx: Transaction, mint: str
 ) -> Union[MintActivity, None]:
-    is_candy_machine_v2 = False
-    is_mint = False
+    def parse_ix(ix: Instruction):
+        if not ix.is_mint_ix:
+            return None
+        logger.debug("Is mint ix")
 
-    for ix in tx.instructions.outer:
-        if ix.is_program_id(Metaplex.CANDY_MACHINE_V2):
-            is_candy_machine_v2 = True
-            logger.debug("Program is CandyMachineV2")
+        if not Metaplex.CANDY_MACHINE_V2 in tx.account_keys:
+            return None
+        logger.debug("Program is CandyMachineV2")
 
-        if ix.is_mint(mint):
-            is_mint = True
-            logger.debug("Is correct mint tx")
-            new_authority = ix.info["mintAuthority"]
-            new_token_account = ix.info["account"]
+        mint = ix.info["mint"]
+        new_authority = ix.info["mintAuthority"]
+        new_token_account = ix.info["account"]
 
-    if is_candy_machine_v2 and is_mint:
         return MintActivity(
             transaction_id=tx.transaction_id,
             block_time=tx.block_time,
@@ -83,7 +85,8 @@ def parse_mint_candy_machine_v2(
             new_token_account=new_token_account,
             program="CandyMachineV2",
         )
-    return None
+
+    return tx.parse_outer_ixs(parse_ix)
 
 
 def parse_mint(tx: Transaction, mint: str) -> Union[MintActivity, None]:
