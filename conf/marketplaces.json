@@ -1,0 +1,82 @@
+{
+  "magic_eden_v1": {
+    "name": "MagicEden V1",
+    "program": "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8",
+    "authority": "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp",
+    "instructions": {
+      "delisting": {
+        "base64_prefix": "TE6axTojnp",
+        "hex_prefix": "",
+        "account_indices": {
+          "mint": 0,
+          "new_authority": 0,
+          "old_authority": 0,
+          "new_token_account": 0,
+          "old_token_account": 0
+        }
+      },
+      "listing": {
+        "base64_prefix": "2RD37fomjE",
+        "hex_prefix": "",
+        "account_indices": {
+          "mint": 0,
+          "new_authority": 0,
+          "old_authority": 0,
+          "new_token_account": 0,
+          "old_token_account": 0
+        }
+      },
+      "sale": {
+        "base64_prefix": "3UjLyJvuY4",
+        "hex_prefix": "",
+        "account_indices": {
+          "mint": null,
+          "new_authority": 0,
+          "old_authority": 2,
+          "new_token_account": 1,
+          "old_token_account": 1
+        }
+      }
+    }
+  },
+  "magic_eden_v2": {
+    "name": "MagicEden V2",
+    "program": "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K",
+    "authority": "1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix",
+    "instructions": {
+      "delisting": {
+        "base64_prefix": "ENwHiaH9NA",
+        "hex_prefix": "c6c682cba35faf4b",
+        "account_indices": {
+          "mint": 3,
+          "new_authority": 0,
+          "old_authority": 9,
+          "new_token_account": 2,
+          "old_token_account": 2
+        }
+      },
+      "listing": {
+        "base64_prefix": "2B3vSpRNKZ",
+        "hex_prefix": "33e685a4017f83ad",
+        "account_indices": {
+          "mint": 4,
+          "new_authority": 13,
+          "old_authority": 0,
+          "new_token_account": 2,
+          "old_token_account": 2
+        }
+      },
+      "sale": {
+        "base64_prefix": "d6iteQtSVr",
+        "hex_prefix": "254ad99d4f312306",
+        "account_indices": {
+          "mint": 4,
+          "new_authority": 0,
+          "old_authority": 1,
+          "new_token_account": 7,
+          "old_token_account": 3
+        }
+      }
+    }
+  }
+}
