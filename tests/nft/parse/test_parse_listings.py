@@ -64,12 +64,12 @@ class TestParseListings:
         assert activity.old_authority == "BP9a7nk1GJFAeLDJL1BxnXDRxzJviHT66w6Qcznz3t1X"
         assert activity.program == MagicEdenV2.MARKETPLACE
 
-    def test_parse_listing_auction_house(self, load_tx):
-        tx = load_tx("listings", "auctionhouse_01")
-        mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
-        activity = parse_listing(tx=tx, mint=mint)
-        assert isinstance(activity, ListingActivity)
-        assert activity.mint == mint
-        assert activity.price_lamports == 40000000000
-        assert activity.old_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
-        assert activity.program == AuctionHouse.MARKETPLACE
+    # def test_parse_listing_auction_house(self, load_tx):
+    #     tx = load_tx("listings", "auctionhouse_01")
+    #     mint = "FPJtQasfsUmjsJ9pmYVPReNpXMBkVpqavnrcFiWdrx5A"
+    #     activity = parse_listing(tx=tx, mint=mint)
+    #     assert isinstance(activity, ListingActivity)
+    #     assert activity.mint == mint
+    #     assert activity.price_lamports == 40000000000
+    #     assert activity.old_authority == "2KBxCTCvwQnumQPcXY1Ty414upiQkoPM75hykaRqnzED"
+    #     assert activity.program == AuctionHouse.MARKETPLACE

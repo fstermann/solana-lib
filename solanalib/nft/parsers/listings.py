@@ -118,7 +118,7 @@ def parse_listing(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
     to_parse = {
         "MagiEdenV1": parse_listing_mev1,
         "MagiEdenV2": parse_listing_mev2,
-        "AuctionHouse": parse_listing_auction_house,
+        # "AuctionHouse": parse_listing_auction_house,
     }
 
     for marketplace, parser in to_parse.items():
