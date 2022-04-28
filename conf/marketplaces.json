@@ -19,11 +19,11 @@
         "base64_prefix": "2RD37fomjE",
         "hex_prefix": "",
         "account_indices": {
-          "mint": 0,
-          "new_authority": 0,
+          "mint": null,
+          "new_authority": null,
           "old_authority": 0,
-          "new_token_account": 0,
-          "old_token_account": 0
+          "new_token_account": 1,
+          "old_token_account": 1
         }
       },
       "sale": {
