@@ -1,4 +1,4 @@
-from solanalib.nft.models import MintActivity
+from solanalib.nft.activities import MintActivity
 from solanalib.nft.parsers.mints import parse_mint
 
 

@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from solanalib.nft.models import Transaction
+from solanalib.nft.transaction import Transaction
 
 
 @pytest.fixture

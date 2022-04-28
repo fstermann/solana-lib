@@ -1,8 +1,9 @@
 from typing import List
 
 from solanalib.logger import logger
-from solanalib.nft.models import Activity, ActivityType, NFTTransaction
+from solanalib.nft.activities import Activity, ActivityType
 from solanalib.nft.parse import parse_transaction
+from solanalib.nft.transaction import NFTTransaction
 from solanalib.publickey import PublicKey
 from solanalib.rpc.client import Client
 from solanalib.rpc.proclient import ProClient

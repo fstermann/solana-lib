@@ -1,4 +1,5 @@
-from solanalib.nft.models import MintActivity, NFTTransaction, Transaction
+from solanalib.nft.activities import MintActivity
+from solanalib.nft.transaction import NFTTransaction, Transaction
 from solanalib.nft.parse import _handle_input, parse_transaction
 
 

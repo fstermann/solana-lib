@@ -2,7 +2,8 @@ from typing import Union
 
 from solanalib.constants import Metaplex
 from solanalib.logger import logger
-from solanalib.nft.models import MintActivity, Transaction
+from solanalib.nft.transaction import Transaction
+from solanalib.nft.activities import MintActivity
 
 
 def parse_mint_other(tx: Transaction, mint: str) -> Union[MintActivity, None]:

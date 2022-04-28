@@ -2,13 +2,10 @@ from typing import List, Union
 
 from solana.publickey import PublicKey
 from solanalib.logger import logger
-from solanalib.nft.models import (
-    AccountInfo,
-    Instruction,
-    OuterInstruction,
-    Transaction,
-    TransferActivity,
-)
+from solanalib.nft.accounts import AccountInfo
+from solanalib.nft.activities import TransferActivity
+from solanalib.nft.instructions import Instruction, OuterInstruction
+from solanalib.nft.transaction import Transaction
 from solanalib.rpc.client import Client
 from spl.token.instructions import get_associated_token_address
 

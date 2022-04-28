@@ -1,5 +1,5 @@
 from solanalib.constants import MagicEdenV1, MagicEdenV2
-from solanalib.nft.models import SaleActivity
+from solanalib.nft.activities import SaleActivity
 from solanalib.nft.parsers.sales import parse_sale
 
 

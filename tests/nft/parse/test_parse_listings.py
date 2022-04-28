@@ -1,5 +1,5 @@
 from solanalib.constants import AuctionHouse, MagicEdenV1, MagicEdenV2
-from solanalib.nft.models import ListingActivity
+from solanalib.nft.activities import ListingActivity
 from solanalib.nft.parsers.listings import parse_listing
 
 

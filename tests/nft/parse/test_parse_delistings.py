@@ -1,5 +1,5 @@
 from solanalib.constants import MagicEdenV1, MagicEdenV2
-from solanalib.nft.models import DelistingActivity
+from solanalib.nft.activities import DelistingActivity
 from solanalib.nft.parsers.delistings import parse_delisting
 
 

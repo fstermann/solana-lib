@@ -1,5 +1,5 @@
 from solanalib.nft.parsers.transfers import parse_transfer
-from solanalib.nft.models import TransferActivity
+from solanalib.nft.activities import TransferActivity
 from unittest import mock
 
 

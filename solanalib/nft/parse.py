@@ -1,7 +1,8 @@
 from typing import Union
 
 from solanalib.logger import logger
-from solanalib.nft.models import Activity, NFTTransaction, Transaction, UnknownActivity
+from solanalib.nft.activities import Activity, UnknownActivity
+from solanalib.nft.transaction import NFTTransaction, Transaction
 
 from .parsers.delistings import parse_delisting
 from .parsers.listings import parse_listing

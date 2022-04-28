@@ -2,8 +2,9 @@ from typing import Union
 
 from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
-from solanalib.nft.models import SaleActivity, Transaction, TransferActivity
+from solanalib.nft.activities import SaleActivity, TransferActivity
 from solanalib.nft.parsers.transfers import parse_transfer
+from solanalib.nft.transaction import Transaction
 
 from .util import get_me_lamports_price_from_data
 

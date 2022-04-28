@@ -2,7 +2,8 @@ from typing import Union
 
 from solanalib.constants import MagicEdenV1, MagicEdenV2
 from solanalib.logger import logger
-from solanalib.nft.models import DelistingActivity, Transaction
+from solanalib.nft.activities import DelistingActivity
+from solanalib.nft.transaction import Transaction
 
 
 def parse_delisting_mev1(tx: Transaction, mint: str) -> Union[DelistingActivity, None]:
