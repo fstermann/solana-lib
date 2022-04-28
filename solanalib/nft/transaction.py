@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from solanalib.constants import Marketplace
 from solanalib.util import SafeDict
 from solanalib.logger import logger
+from .instructions import Instructions
 
 
 class Transaction(BaseModel):
@@ -81,3 +82,7 @@ class Transaction(BaseModel):
             if token_balance["mint"] == mint:
                 owners.append(self.get_owner(token_balance))
         return owners
+
+
+class NFTTransaction(Transaction):
+    mint: str
