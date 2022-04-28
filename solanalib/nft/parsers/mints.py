@@ -7,7 +7,7 @@ from solanalib.nft.instructions import Instruction
 from solanalib.nft.transaction import Transaction
 
 
-def parse_mint_other(tx: Transaction, mint: str) -> Union[MintActivity, None]:
+def parse_mint_other(tx: Transaction) -> Union[MintActivity, None]:
     def parse_ix(ix: Instruction):
         if not ix.is_mint_ix:
             return None
@@ -28,12 +28,10 @@ def parse_mint_other(tx: Transaction, mint: str) -> Union[MintActivity, None]:
             program=program,
         )
 
-    return tx.parse_outer_ixs(parse_ix)
+    return tx.parse_ixs(parse_ix)
 
 
-def parse_mint_candy_machine_v1(
-    tx: Transaction, mint: str
-) -> Union[MintActivity, None]:
+def parse_mint_candy_machine_v1(tx: Transaction) -> Union[MintActivity, None]:
     def parse_ix(ix: Instruction):
         if not ix.is_mint_ix:
             return None
@@ -57,12 +55,10 @@ def parse_mint_candy_machine_v1(
             program="CandyMachineV1",
         )
 
-    return tx.parse_outer_ixs(parse_ix)
+    return tx.parse_ixs(parse_ix)
 
 
-def parse_mint_candy_machine_v2(
-    tx: Transaction, mint: str
-) -> Union[MintActivity, None]:
+def parse_mint_candy_machine_v2(tx: Transaction) -> Union[MintActivity, None]:
     def parse_ix(ix: Instruction):
         if not ix.is_mint_ix:
             return None
@@ -86,7 +82,7 @@ def parse_mint_candy_machine_v2(
             program="CandyMachineV2",
         )
 
-    return tx.parse_outer_ixs(parse_ix)
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_mint(tx: Transaction, mint: str) -> Union[MintActivity, None]:
@@ -98,7 +94,7 @@ def parse_mint(tx: Transaction, mint: str) -> Union[MintActivity, None]:
 
     for marketplace, parser in to_parse.items():
         logger.info(f"Checking mint-program {marketplace}")
-        activity = parser(tx=tx, mint=mint)
+        activity = parser(tx=tx)
         if activity:
             return activity
 

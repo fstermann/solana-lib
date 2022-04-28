@@ -45,11 +45,7 @@ def parse_listing_mev1(tx: Transaction, mint: str) -> Union[ListingActivity, Non
             program=marketplace.name,
         )
 
-    for ix in tx.instructions.outer:
-        activity = parse_ix(ix=ix)
-        if activity:
-            return activity
-    return None
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, None]:
@@ -86,11 +82,7 @@ def parse_listing_mev2(tx: Transaction, mint: str) -> Union[ListingActivity, Non
             program=marketplace.name,
         )
 
-    for ix in tx.instructions.outer:
-        activity = parse_ix(ix=ix)
-        if activity:
-            return activity
-    return None
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_listing_auction_house(

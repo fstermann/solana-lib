@@ -39,11 +39,7 @@ def parse_delisting_mev1(tx: Transaction) -> Union[DelistingActivity, None]:
             program=marketplace.name,
         )
 
-    for ix in tx.instructions.outer:
-        activity = parse_ix(ix=ix)
-        if activity:
-            return activity
-    return None
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_delisting_mev2(tx: Transaction) -> Union[DelistingActivity, None]:
@@ -78,17 +74,13 @@ def parse_delisting_mev2(tx: Transaction) -> Union[DelistingActivity, None]:
             program=marketplace.name,
         )
 
-    for ix in tx.instructions.outer:
-        activity = parse_ix(ix=ix)
-        if activity:
-            return activity
-    return None
+    return tx.parse_ixs(parse_ix)
 
 
 def parse_delisting(tx: Transaction, mint: str):
     to_parse = {
-        "MagiEdenV1": parse_delisting_mev1,
-        "MagiEdenV2": parse_delisting_mev2,
+        "MagicEdenV1": parse_delisting_mev1,
+        "MagicEdenV2": parse_delisting_mev2,
     }
 
     for marketplace, parser in to_parse.items():
