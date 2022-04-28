@@ -2,13 +2,13 @@ from enum import Enum
 
 
 class Marketplace(str, Enum):
-    MAGIC_EDEN_V1 = "MagicEdenV1"
-    MAGIC_EDEN_V2 = "MagicEdenV2"
+    MAGIC_EDEN_V1 = "MagicEden V1"
+    MAGIC_EDEN_V2 = "MagicEden V2"
     AUCTION_HOUSE = "AuctionHouse"
 
 
 class MagicEdenV1(str, Enum):
-    NAME = "MagicEdenV1"
+    NAME = "MagicEden V1"
     PROGRAM = "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8"
     AUTHORITY = "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp"
     DELISTING_INSTRUCTION = "TE6axTojnp"
@@ -19,7 +19,7 @@ class MagicEdenV1(str, Enum):
 
 
 class MagicEdenV2(str, Enum):
-    NAME = "MagicEdenV2"
+    NAME = "MagicEden V2"
     PROGRAM = "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K"
     AUTHORITY = "1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix"
     DELISTING_INSTRUCTION = "ENwHiaH9NA"
