@@ -6,7 +6,8 @@ from solanalib.rpc.proclient import ProClient
 
 from .activities import Activity
 from .transaction import NFTTransaction
-from .util import get_previous_token_account, parse_all_transactions, sort_activities
+from .util import (get_previous_token_account, parse_all_transactions,
+                   sort_activities)
 
 
 def get_collection_activities(creator_address):

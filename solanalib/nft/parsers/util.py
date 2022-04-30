@@ -1,4 +1,5 @@
 import base58
+
 from solanalib.constants import AuctionHouse, MagicEdenV1, MagicEdenV2
 
 

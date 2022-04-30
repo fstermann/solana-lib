@@ -1,6 +1,7 @@
 from typing import Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel
+
 from solanalib.nft.activities import Activity
 from solanalib.util import SafeDict
 

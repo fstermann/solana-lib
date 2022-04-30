@@ -1,5 +1,6 @@
-from solanalib.rpc.parameter import Encoding, Commitment, TransactionDetails
 import functools
+
+from solanalib.rpc.parameter import Commitment, Encoding, TransactionDetails
 
 
 def payload(_func=None, *, method: str, id_: int = 1):

@@ -1,6 +1,7 @@
 from typing import Dict, List, Union
 
 from pydantic import BaseModel
+
 from solanalib.logger import logger
 from solanalib.util import SafeDict
 

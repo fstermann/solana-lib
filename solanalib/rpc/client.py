@@ -2,6 +2,7 @@ from typing import List, Union
 
 import requests
 from ratelimit import limits, sleep_and_retry
+
 from solanalib.logger import logger
 
 from .endpoints import Endpoint
