@@ -7,27 +7,6 @@ class Marketplace(str, Enum):
     AUCTION_HOUSE = "AuctionHouse"
 
 
-class MagicEdenV1(str, Enum):
-    NAME = "MagicEden V1"
-    PROGRAM = "MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8"
-    AUTHORITY = "GUfCR9mK6azb9vcpsxgXyj7XRPAKJd4KMHTTVvtncGgp"
-    DELISTING_INSTRUCTION = "TE6axTojnp"
-    LISTING_INSTRUCTION = "2RD37fomjE"
-    SALE_INSTRUCTION = "3UjLyJvuY4"
-    ACCEPT_BID_INSTRUCTION = "RJ7YoBrhBj"
-    MARKETPLACE = Marketplace.MAGIC_EDEN_V1.value
-
-
-class MagicEdenV2(str, Enum):
-    NAME = "MagicEden V2"
-    PROGRAM = "M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K"
-    AUTHORITY = "1BWutmTvYPwDtmw9abTkS4Ssr8no61spGAvW1X6NDix"
-    DELISTING_INSTRUCTION = "ENwHiaH9NA"
-    LISTING_INSTRUCTION = "2B3vSpRNKZ"
-    SALE_INSTRUCTION = "d6iteQtSVr"
-    MARKETPLACE = Marketplace.MAGIC_EDEN_V2.value
-
-
 class AuctionHouse(str, Enum):
     NAME = "AuctionHouse"
     PROGRAM = "hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk"
