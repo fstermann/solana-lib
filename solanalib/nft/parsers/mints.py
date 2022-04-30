@@ -37,7 +37,7 @@ def parse_mint_candy_machine_v1(tx: Transaction) -> Union[MintActivity, None]:
             return None
         logger.debug("Is mint ix")
 
-        if not Metaplex.CANDY_MACHINE_V1 in tx.account_keys:
+        if Metaplex.CANDY_MACHINE_V1 not in tx.account_keys:
             return None
         logger.debug("Program is CandyMachineV1")
 
@@ -64,7 +64,7 @@ def parse_mint_candy_machine_v2(tx: Transaction) -> Union[MintActivity, None]:
             return None
         logger.debug("Is mint ix")
 
-        if not Metaplex.CANDY_MACHINE_V2 in tx.account_keys:
+        if Metaplex.CANDY_MACHINE_V2 not in tx.account_keys:
             return None
         logger.debug("Program is CandyMachineV2")
 

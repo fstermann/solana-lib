@@ -4,7 +4,8 @@ import traceback
 
 class IndentFormatter(logging.Formatter):
     """
-    Custom logger adapted from https://code.activestate.com/recipes/412603-stack-based-indentation-of-formatted-logging/
+    Custom logger adapted from
+    https://code.activestate.com/recipes/412603-stack-based-indentation-of-formatted-logging/
 
     Warning: Using this logger might decrease performance.
 

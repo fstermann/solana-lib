@@ -103,10 +103,6 @@ class Instruction(SafeDict):
             and self.info["account"] == account
         )
 
-    @property
-    def is_mint_ix(self) -> bool:
-        return self.is_type("mintTo") and self.is_program("spl-token")
-
 
 class OuterInstruction(Instruction):
     @property

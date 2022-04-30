@@ -28,7 +28,7 @@ def parse_sale_unknown(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
 
             if not ix.is_parsed:
                 logger.debug(f"Parsing Inner instruction {index}")
-                if not index in tx.instructions.inner:
+                if index not in tx.instructions.inner:
                     continue
 
                 for iix in tx.instructions.inner[index]:

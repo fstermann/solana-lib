@@ -7,7 +7,7 @@ class SafeDict(dict):
             value = dict.__getitem__(self, key)
             if isinstance(value, dict):
                 value = type(self)(value)
-        except:
+        except KeyError:
             value = type(self)()
         return value
 

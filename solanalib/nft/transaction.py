@@ -1,7 +1,6 @@
 from typing import Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel
-from solanalib.logger import logger
 from solanalib.nft.activities import Activity
 from solanalib.util import SafeDict
 
@@ -54,7 +53,7 @@ class Transaction(BaseModel):
                 continue
             if ix.is_parsed:
                 continue
-            if not index in self.instructions.inner:
+            if index not in self.instructions.inner:
                 continue
 
             for iix in self.instructions.inner[index]:
