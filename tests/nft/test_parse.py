@@ -33,5 +33,5 @@ class TestParse:
         # The specific parsers are tested in their respective test modules
         tx = load_tx("mints", "01")
         mint_token = "FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC"
-        activity = parse_transaction(transaction=tx, mint=mint_token)
+        activity = parse_transaction(transaction=tx)
         assert isinstance(activity, MintActivity)

@@ -15,11 +15,11 @@ class IndentFormatter(logging.Formatter):
         logging.Formatter.__init__(self, fmt, datefmt)
         self.baseline = len(traceback.extract_stack())
 
-    def format(self, rec):
+    def format(self, record):
         stack = traceback.extract_stack()
-        rec.indent = "│ " * (len(stack) - self.baseline)
-        out = logging.Formatter.format(self, rec)
-        del rec.indent
+        record.indent = "│ " * (len(stack) - self.baseline)
+        out = logging.Formatter.format(self, record)
+        del record.indent
         return out
 
 

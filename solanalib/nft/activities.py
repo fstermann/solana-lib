@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # noqa
 
 
 class ActivityType(str, Enum):
@@ -18,40 +18,40 @@ class Activity(BaseModel):
     block_time: int
     slot: int
     mint: Union[str, None] = None
-    old_token_account: str = None
-    new_token_account: str = None
-    old_authority: str = None  # -> old_authority, transfered from
-    new_authority: str = None  # -> buyer, minter, transfered to
-    program: str = None
+    old_token_account: Union[str, None] = None
+    new_token_account: Union[str, None] = None
+    old_authority: Union[str, None] = None  # -> old_authority, transfered from
+    new_authority: Union[str, None] = None  # -> buyer, minter, transfered to
+    program: Union[str, None] = None
 
     def __hash__(self):
         return hash(self.transaction_id)
 
 
 class UnknownActivity(Activity):
-    type_: ActivityType = ActivityType.UNKNOWN.value
+    type_: ActivityType = ActivityType.UNKNOWN
 
 
 class MintActivity(Activity):
-    type_: ActivityType = ActivityType.MINT.value
+    type_: ActivityType = ActivityType.MINT
 
 
 class ListingActivity(Activity):
     price_lamports: int
 
-    type_: ActivityType = ActivityType.LISTING.value
+    type_: ActivityType = ActivityType.LISTING
 
 
 class TransferActivity(Activity):
 
-    type_: ActivityType = ActivityType.TRANSFER.value
+    type_: ActivityType = ActivityType.TRANSFER
 
 
 class DelistingActivity(Activity):
-    type_: ActivityType = ActivityType.DELISTING.value
+    type_: ActivityType = ActivityType.DELISTING
 
 
 class SaleActivity(Activity):
     price_lamports: int
 
-    type_: ActivityType = ActivityType.SALE.value
+    type_: ActivityType = ActivityType.SALE

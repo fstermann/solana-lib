@@ -1,6 +1,6 @@
 from typing import Callable, Dict, List, Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # noqa
 
 from solanalib.nft.activities import Activity
 from solanalib.util import SafeDict
@@ -77,9 +77,10 @@ class Transaction(BaseModel):
     def account_keys(self):
         return [account["pubkey"] for account in self.accounts.values()]
 
-    def get_account(self, index):
+    def get_account(self, index) -> Union[str, None]:
         if index in self.accounts:
             return self.accounts[index]["pubkey"]
+        return None
 
     def get_owner(self, token_balance: SafeDict):
         if "owner" in token_balance:

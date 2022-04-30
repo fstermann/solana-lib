@@ -1,7 +1,7 @@
 from typing import List, Union
 
 import requests
-from ratelimit import limits, sleep_and_retry
+from ratelimit import limits, sleep_and_retry  # noqa
 
 from solanalib.logger import logger
 

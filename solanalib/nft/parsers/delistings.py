@@ -77,7 +77,7 @@ def parse_delisting_mev2(tx: Transaction) -> Union[DelistingActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_delisting(tx: Transaction, mint: str):
+def parse_delisting(tx: Transaction):
     to_parse = {
         "MagicEdenV1": parse_delisting_mev1,
         "MagicEdenV2": parse_delisting_mev2,

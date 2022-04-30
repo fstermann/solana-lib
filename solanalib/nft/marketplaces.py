@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # noqa
 
 
 class AccountIndices(BaseModel):

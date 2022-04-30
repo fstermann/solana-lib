@@ -18,7 +18,7 @@ from .parsers.transfers import parse_transfer
 
 
 def _handle_input(
-    transaction: Union[dict, Transaction, NFTTransaction], mint: str
+    transaction: Union[dict, Transaction, NFTTransaction], mint: str = None
 ) -> Union[str, Transaction]:
     if isinstance(transaction, dict):
         logger.debug("Received transaction as dict")
@@ -45,12 +45,7 @@ def _handle_input(
     return transaction, mint
 
 
-def parse_transaction(
-    transaction: Union[dict, Transaction, NFTTransaction], mint: str = None
-) -> Activity:
-    logger.debug("Checking input")
-    transaction, mint = _handle_input(transaction, mint)
-
+def parse_transaction(transaction: Transaction) -> Activity:
     logger.info(f"Parsing transaction {transaction.transaction_id}")
 
     to_check = {
@@ -62,7 +57,7 @@ def parse_transaction(
     }
     for activity_type, parser in to_check.items():
         logger.debug(f"Check if transaction is '{activity_type}'")
-        activity = parser(transaction, mint)
+        activity = parser(transaction)
         if activity:
             return activity
 
@@ -71,5 +66,4 @@ def parse_transaction(
         transaction_id=transaction.transaction_id,
         block_time=transaction.block_time,
         slot=transaction.slot,
-        mint=mint,
     )

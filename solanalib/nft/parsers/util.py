@@ -1,6 +1,7 @@
 import base58
 
-from solanalib.constants import AuctionHouse, MagicEdenV1, MagicEdenV2
+from solanalib.constants import AuctionHouse
+from solanalib.nft.marketplaces import marketplaces
 
 
 def to_little_endian_from_hex(val):
@@ -14,8 +15,8 @@ def get_me_lamports_price_from_data(data, program):
     hex_data = base58.b58decode(data).hex()
 
     program2index = {
-        MagicEdenV1.PROGRAM: slice(16, 32),
-        MagicEdenV2.PROGRAM: slice(20, 36),
+        marketplaces.magic_eden_v1.program: slice(16, 32),
+        marketplaces.magic_eden_v2.program: slice(20, 36),
         AuctionHouse.PROGRAM: slice(22, 38),
     }
 

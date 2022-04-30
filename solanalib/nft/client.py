@@ -1,16 +1,15 @@
-from typing import List
+from typing import Dict, List
 
 from solanalib.logger import logger
 from solanalib.publickey import PublicKey
 from solanalib.rpc.proclient import ProClient
 
 from .activities import Activity
-from .transaction import NFTTransaction
-from .util import (get_previous_token_account, parse_all_transactions,
-                   sort_activities)
+from .transaction import Transaction
+from .util import get_previous_token_account, parse_all_transactions, sort_activities
 
 
-def get_collection_activities(creator_address):
+def get_collection_activities():
     # get mint list
 
     # for mint in mint list
@@ -27,7 +26,9 @@ class NftClient:
     def __init__(self, client: ProClient = ProClient()):
         self.client = client
 
-    def get_multiple_mint_activites(self, token_mints: List[str]) -> List[Activity]:
+    def get_multiple_mint_activites(
+        self, token_mints: List[str]
+    ) -> Dict[str, Activity]:
         return {mint: self.get_mint_activities(mint) for mint in token_mints}
 
     def get_mint_activities(self, token_mint: PublicKey) -> List[Activity]:
@@ -42,8 +43,7 @@ class NftClient:
                 f"Fetching all activites for token account {current_token_account}"
             )
             activities = self.get_mint_activites_for_token_account(
-                token_mint=token_mint,
-                token_account=current_token_account,
+                token_account=current_token_account
             )
             all_activities += activities
 
@@ -57,13 +57,13 @@ class NftClient:
         return sorted_activities
 
     def get_mint_activites_for_token_account(
-        self, token_mint: str, token_account: str
+        self, token_account: str
     ) -> List[Activity]:
         transactions = self.client.get_all_parsed_transactions_for_address(
             account=token_account
         )
         txs = [
-            NFTTransaction(mint=token_mint, transaction=tx["result"])
+            Transaction(transaction=tx["result"])
             for tx in transactions
             if not tx["result"]["meta"]["err"]
         ]
@@ -82,7 +82,7 @@ class NftClient:
             msg = "Got more than one account for mint."
             logger.error(msg)
             raise ValueError(msg)
-        if len(largest_account) < 1:
-            msg = "Found no account for mint."
-            logger.error(msg)
-            raise ValueError(msg)
+
+        msg = "Found no account for mint."
+        logger.error(msg)
+        raise ValueError(msg)

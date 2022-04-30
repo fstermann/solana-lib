@@ -85,7 +85,7 @@ def parse_mint_candy_machine_v2(tx: Transaction) -> Union[MintActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_mint(tx: Transaction, mint: str) -> Union[MintActivity, None]:
+def parse_mint(tx: Transaction) -> Union[MintActivity, None]:
     to_parse = {
         "CandyMachineV1": parse_mint_candy_machine_v1,
         "CandyMachineV2": parse_mint_candy_machine_v2,

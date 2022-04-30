@@ -19,14 +19,13 @@ def payload(_func=None, *, method: str, id_: int = 1):
 
     if _func is None:
         return decorator_payload
-    else:
-        return decorator_payload(_func)
+    return decorator_payload(_func)
 
 
 class MethodBuilder:
+    @staticmethod
     @payload(method="getTransaction")
     def get_transaction(
-        self,
         transaction_signature: str,
         encoding: Encoding = Encoding.JSON_PARSED,
         commitment: Commitment = Commitment.FINALIZED,
@@ -40,9 +39,9 @@ class MethodBuilder:
         ]
         return params
 
+    @staticmethod
     @payload(method="getTokenLargestAccounts")
     def get_token_largest_accounts(
-        self,
         token_mint: str,
         commitment: Commitment = Commitment.FINALIZED,
     ):
@@ -54,9 +53,9 @@ class MethodBuilder:
         ]
         return params
 
+    @staticmethod
     @payload(method="getSignaturesForAddress")
     def get_signatures_for_address(
-        self,
         account: str,
         limit: int = 1000,  # between 1 and 1000
         before: str = None,
@@ -78,9 +77,9 @@ class MethodBuilder:
         ]
         return params
 
+    @staticmethod
     @payload(method="getAccountInfo")
     def get_account_info(
-        self,
         account: str,
         encoding: Encoding = Encoding.JSON_PARSED,
         commitment: Commitment = Commitment.FINALIZED,
@@ -94,9 +93,9 @@ class MethodBuilder:
         ]
         return params
 
+    @staticmethod
     @payload(method="getBlock")
     def get_block(
-        self,
         slot: int,
         encoding: Encoding = Encoding.JSON_PARSED,
         transaction_details: TransactionDetails = TransactionDetails.FULL,
