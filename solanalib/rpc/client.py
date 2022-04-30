@@ -1,38 +1,47 @@
 from typing import List, Union
 
 import requests
+from ratelimit import limits, sleep_and_retry
+from solanalib.logger import logger
 
 from .endpoints import Endpoint
 from .methods import MethodBuilder
 from .parameter import Commitment, Encoding, TransactionDetails
-from solanalib.logger import logger
 
 
 class Client:
     endpoint: Union[Endpoint, str] = Endpoint.DEFAULT
     method_builder: MethodBuilder = None
 
-    def __init__(self, endpoint: Union[Endpoint, str] = Endpoint.DEFAULT):
+    def __init__(
+        self, endpoint: Union[Endpoint, str] = Endpoint.DEFAULT, ratelimit: int = 20
+    ):
         self.endpoint = endpoint
         self.session = requests.Session()
         self.method_builder = MethodBuilder()
+        self.ratelimit = limits(calls=ratelimit, period=1)
 
     def _make_request(self, payload):
-        logger.debug(f"Making request to {self.endpoint.url}")
-        payload_string = f"{str(payload)[:10]}...{str(payload)[-10:]}"
-        payload_len = len(payload) if isinstance(payload, list) else 1
-        logger.debug(
-            f"Payload ({payload_len} call{'' if payload_len == 1 else 's'}): {payload_string}"
-        )
+        @sleep_and_retry
+        @self.ratelimit
+        def _make_request_limited():
+            logger.debug(f"Making request to {self.endpoint.url}")
+            payload_string = f"{str(payload)[:10]}...{str(payload)[-10:]}"
+            payload_len = len(payload) if isinstance(payload, list) else 1
+            logger.debug(
+                f"Payload ({payload_len} call{'' if payload_len == 1 else 's'}): {payload_string}"
+            )
 
-        response = self.session.post(self.endpoint.url, json=payload)
+            response = self.session.post(self.endpoint.url, json=payload)
 
-        logger.debug(f"Response status: {response.status_code}")
-        if response.status_code != 200:
-            logger.debug(response.text)
+            logger.debug(f"Response status: {response.status_code}")
+            if response.status_code != 200:
+                logger.debug(response.text)
 
-        json_response = response.json()
-        return json_response
+            json_response = response.json()
+            return json_response
+
+        return _make_request_limited()
 
     def health_check(self):
         pass
