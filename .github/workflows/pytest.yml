@@ -21,4 +21,4 @@ jobs:
           pip install -r requirements/test.txt
       - name: Running unittests in pytest
         run: |
-          pytest solanalib
+          python -m pytest tests
