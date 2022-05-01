@@ -19,6 +19,14 @@ A basic library focused on fetching data from the Solana blockchain and parsing 
 
     pip install -r requirements/common.txt -r requirements/lint.txt -r requirements/test.txt
 
+### Run linter
+
+    pylama solanalib
+
+### Run tests
+
+    python -m pytest tests
+
 ## Comments
 
 ### Current Workflow to get NFTs
