@@ -1,7 +1,6 @@
 from typing import Dict, List
 
 from solanalib.logger import logger
-from solanalib.publickey import PublicKey
 from solanalib.rpc.proclient import ProClient
 
 from .activities import Activity
@@ -31,7 +30,7 @@ class NftClient:
     ) -> Dict[str, Activity]:
         return {mint: self.get_mint_activities(mint) for mint in token_mints}
 
-    def get_mint_activities(self, token_mint: PublicKey) -> List[Activity]:
+    def get_mint_activities(self, token_mint: str) -> List[Activity]:
         logger.info(f"Fetching current token account for mint {token_mint}")
         current_token_account = self.get_current_token_account(token_mint=token_mint)
 
@@ -70,7 +69,7 @@ class NftClient:
         activities = parse_all_transactions(transactions=txs)
         return activities
 
-    def get_current_token_account(self, token_mint: PublicKey):
+    def get_current_token_account(self, token_mint: str):
         response = self.client.get_token_largest_accounts(token_mint=token_mint)
         account_infos = response["result"]["value"]
         largest_account = [
