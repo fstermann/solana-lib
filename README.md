@@ -1,65 +1,69 @@
 # Solana Lib
 
-A basic library focused on fetching data from the Solana blockchain.
+A basic library focused on fetching data from the Solana blockchain and parsing NFT transactions.
 
 
 ## Setup
 
-### Install requirements
+    python -m venv .venv
+
+### Compile requirements 
+
+*(you don't need to do this)*
 
     pip-compile requirements/common.in --output-file=- > requirements/common.txt
     pip-compile requirements/lint.in --output-file=- > requirements/lint.txt
     pip-compile requirements/test.in --output-file=- > requirements/test.txt
 
+### Install requirements
+
     pip install -r requirements/common.txt -r requirements/lint.txt -r requirements/test.txt
+
+## Comments
 
 ### Current Workflow to get NFTs
 
-- Get Program Accounts 
-    Filter with memcp and look for the creator account at offset 326 
-    More info on the structure of metaplex accounts here 
-    https://docs.metaplex.com/architecture/deep_dive/overview
+Get Program Accounts 
+Filter with memcp and look for the creator account at offset 326 
+More info on the structure of metaplex accounts here 
+https://docs.metaplex.com/architecture/deep_dive/overview
 
--- pubkey of the result is the account that holds metadata info
--- parse account data to get the mint (nft address)
+* pubkey of the result is the account that holds metadata info
+* parse account data to get the mint (nft address)
 
-    data_64 = base64.b64decode(data)
-    then get the mint with unpack_metatdata_account
+        data_64 = base64.b64decode(data)
 
+* then get the mint with unpack_metatdata_account
 
+        pubkey2data = {x["pubkey"]: unpack_metadata_account(base64.b64decode(x["account"]["data"][0])) for x in result}
 
-    pubkey2data = {x["pubkey"]: unpack_metadata_account(base64.b64decode(x["account"]["data"][0])) for x in result}
+* Find associate token account
+    * This account is involved in sales, as well as listings (which the mint is not)
+    * See https://spl.solana.com/associated-token-account#finding-the-associated-token-account-address
+    * with seeds
+    
+            walletAddress.toBuffer(), <- The minter
+            TOKEN_PROGRAM_ID.toBuffer(),
+            tokenMintAddress.toBuffer(), <- The mint
 
--- Find associate token account
---- This account is involved in sales, as well as listings (which the mint is not)
---- See https://spl.solana.com/associated-token-account#finding-the-associated-token-account-address
-with seeds
-    walletAddress.toBuffer(), <- The minter
-    TOKEN_PROGRAM_ID.toBuffer(),
-    tokenMintAddress.toBuffer(), <- The mint
-
-    from solana.publickey import PublicKey
-    seeds = [
-        base58.b58decode(str("6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ")),
-        base58.b58decode(str("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")),
-        base58.b58decode(str("FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC")),
-    ]
-    associate_token_account = PublicKey.find_program_address(
-        seeds=seeds,
-        program_id=ASSOCIATE_TOKEN_PROGRAM,
-    )
-    associate_token_account -> CpkL4HybWzJFqwHWZRR6kZ6SdK2exE1goQhu3Pt3JQFP
-
+            from solana.publickey import PublicKey
+            seeds = [
+                base58.b58decode(str("6Y2Scqw11m2WUZ7qiS16e3Z9vsw6xsrrGzxktLrMX4BJ")),
+                base58.b58decode(str("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")),
+                base58.b58decode(str("FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC")),
+            ]
+            associate_token_account = PublicKey.find_program_address(
+                seeds=seeds,
+                program_id=ASSOCIATE_TOKEN_PROGRAM,
+            )
+            associate_token_account -> CpkL4HybWzJFqwHWZRR6kZ6SdK2exE1goQhu3Pt3JQFP
 
 To get the Associate Token Account use getTokenLargestAccounts with mint as key
--> Problem: Multiple accounts are returned
---> Need to find the "first" account, the one that was involved in the mint
+  * Problem: Multiple accounts are returned
+      * Need to find the "first" account, the one that was involved in the mint
+      * Then iteratively parse transactions to find the next, and next, and next token account
 
-
-
-
-To get the metadata address if you have the mint
-metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s is the Metaplex Metadata Token program
+Get the nft metadata address if you have the mint, with `metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s` as the Metaplex Metadata Token program id.
 
     from solana.publickey import PublicKey
     seeds = [
@@ -93,10 +97,10 @@ First, base58 decode the instruction data and convert to hex
 
 I then went to an online hex converter (https://www.scadacore.com/tools/programming-calculators/online-hex-converter/)
 
-- No luck
+* No luck
 
 I looked at the listing price in the program logs
-- listing price was 7490000000
+* listing price was 7490000000
 
 To find out the hex representation, i wen to an online hex and little endian converter (https://www.save-editor.com/tools/wse_hex.html) and got the Hexadecimal number
 
