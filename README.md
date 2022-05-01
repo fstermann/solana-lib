@@ -3,6 +3,16 @@
 A basic library focused on fetching data from the Solana blockchain.
 
 
+## Setup
+
+### Install requirements
+
+    pip-compile requirements/common.in --output-file=- > requirements/common.txt
+    pip-compile requirements/lint.in --output-file=- > requirements/lint.txt
+    pip-compile requirements/test.in --output-file=- > requirements/test.txt
+
+    pip install -r requirements/common.txt -r requirements/lint.txt -r requirements/test.txt
+
 ### Current Workflow to get NFTs
 
 - Get Program Accounts 
