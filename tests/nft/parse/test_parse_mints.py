@@ -3,8 +3,8 @@ from solanalib.nft.parsers.mints import parse_mint
 
 
 class TestParseMints:
-    def test_parse_mint(self, load_tx):
-        tx = load_tx("mints", "01")
+    def test_parse_mint(self, load_nft_tx):
+        tx = load_nft_tx("mints", "01")
         mint = "FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC"
         activity = parse_mint(tx=tx)
         assert isinstance(activity, MintActivity)

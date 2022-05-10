@@ -5,7 +5,7 @@ from solanalib.nft.nft_transaction import NftTransaction
 
 
 @pytest.fixture
-def load_tx():
+def load_nft_tx():
     def loader(tx_type: str, tx_id: str, as_dict: bool = False) -> NftTransaction:
         with open(f"tests/nft/txs/{tx_type}/tx_{tx_type}_{tx_id}.json", "r") as f:
             data = json.load(f)

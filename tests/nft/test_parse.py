@@ -3,9 +3,9 @@ from solanalib.nft.parse import parse_transaction
 
 
 class TestParse:
-    def test_parse(self, load_tx):
+    def test_parse(self, load_nft_tx):
         # The specific parsers are tested in their respective test modules
-        tx = load_tx("mints", "01")
+        tx = load_nft_tx("mints", "01")
         mint_token = "FDNXh1uCkQ3FE9BFVJMqeimQGUTAUinjdcgvaavufBzC"
         activity = parse_transaction(transaction=tx)
         assert isinstance(activity, MintActivity)
