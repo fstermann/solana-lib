@@ -104,6 +104,13 @@ class Instruction(SafeDict):
             and self.info["account"] == account
         )
 
+    def is_sol_transfer(self) -> bool:
+        return (
+            self.is_program("system")
+            and self.is_type("transfer")
+            and "lamports" in self.info
+        )
+
 
 class OuterInstruction(Instruction):
     @property
