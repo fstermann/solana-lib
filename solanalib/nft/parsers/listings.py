@@ -5,12 +5,12 @@ from solanalib.logger import logger
 from solanalib.nft.activities import ListingActivity
 from solanalib.nft.instructions import Instruction
 from solanalib.nft.marketplaces import marketplaces
-from solanalib.nft.transaction import Transaction
+from solanalib.nft.nft_transaction import NftTransaction
 
 from .util import get_me_lamports_price_from_data
 
 
-def parse_listing_mev1(tx: Transaction) -> Union[ListingActivity, None]:
+def parse_listing_mev1(tx: NftTransaction) -> Union[ListingActivity, None]:
     def parse_ix(ix: Instruction) -> Union[ListingActivity, None]:
         marketplace = marketplaces.magic_eden_v1
 
@@ -48,7 +48,7 @@ def parse_listing_mev1(tx: Transaction) -> Union[ListingActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_listing_mev2(tx: Transaction) -> Union[ListingActivity, None]:
+def parse_listing_mev2(tx: NftTransaction) -> Union[ListingActivity, None]:
     def parse_ix(ix: Instruction) -> Union[ListingActivity, None]:
         marketplace = marketplaces.magic_eden_v2
 
@@ -86,7 +86,7 @@ def parse_listing_mev2(tx: Transaction) -> Union[ListingActivity, None]:
 
 
 # def parse_listing_auction_house(
-#     tx: Transaction, mint: str
+#     tx: NftTransaction, mint: str
 # ) -> Union[ListingActivity, None]:
 #     for ix in tx.instructions.outer:
 #         if not ix.is_program_id(AuctionHouse.PROGRAM):
@@ -114,7 +114,7 @@ def parse_listing_mev2(tx: Transaction) -> Union[ListingActivity, None]:
 #     return None
 
 
-def parse_listing(tx: Transaction) -> Union[ListingActivity, None]:
+def parse_listing(tx: NftTransaction) -> Union[ListingActivity, None]:
     to_parse = {
         "MagiEdenV1": parse_listing_mev1,
         "MagiEdenV2": parse_listing_mev2,

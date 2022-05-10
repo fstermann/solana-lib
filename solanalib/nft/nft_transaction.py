@@ -1,46 +1,26 @@
-from typing import Callable, Dict, List, Optional, Union
-
-from pydantic import BaseModel  # noqa
+from typing import Callable, List, Optional, Union
 
 from solanalib.nft.activities import Activity
+from solanalib.transaction import Transaction
 from solanalib.util import SafeDict
 
-from .instructions import Instructions
 
-
-class Transaction(BaseModel):
-    transaction_id: str
-    block_time: int
-    slot: int
-    instructions: Instructions
+class NftTransaction(Transaction):
     pre_token_balances: List[SafeDict]
     post_token_balances: List[SafeDict]
-    accounts: Dict[int, SafeDict]
 
     def __init__(self, transaction: dict, *args, **kwargs):
         super().__init__(
-            transaction_id=transaction["transaction"]["signatures"][0],
-            block_time=transaction["blockTime"],
-            slot=transaction["slot"],
-            instructions=Instructions(transaction),
+            transaction=transaction,
             pre_token_balances=[
                 SafeDict(bal) for bal in transaction["meta"]["preTokenBalances"]
             ],
             post_token_balances=[
                 SafeDict(bal) for bal in transaction["meta"]["postTokenBalances"]
             ],
-            accounts={
-                index: SafeDict(acc)
-                for index, acc in enumerate(
-                    transaction["transaction"]["message"]["accountKeys"]
-                )
-            },
             *args,
             **kwargs,
         )
-
-    def __hash__(self):
-        return hash(self.transaction_id)
 
     def parse_ixs(
         self, parser: Callable, with_inner: Optional[bool] = False
@@ -71,15 +51,6 @@ class Transaction(BaseModel):
         for token_balance in self.post_token_balances:
             if self.get_owner(token_balance) in args:
                 return token_balance["mint"]
-        return None
-
-    @property
-    def account_keys(self):
-        return [account["pubkey"] for account in self.accounts.values()]
-
-    def get_account(self, index) -> Union[str, None]:
-        if index in self.accounts:
-            return self.accounts[index]["pubkey"]
         return None
 
     def get_owner(self, token_balance: SafeDict):
@@ -120,7 +91,3 @@ class Transaction(BaseModel):
             if token_balance["mint"] == mint:
                 owners.append(self.get_owner(token_balance))
         return owners
-
-
-class NFTTransaction(Transaction):
-    mint: str

@@ -1,8 +1,6 @@
-from typing import Union
-
 from solanalib.logger import logger
 from solanalib.nft.activities import Activity, UnknownActivity
-from solanalib.nft.transaction import NFTTransaction, Transaction
+from solanalib.nft.nft_transaction import NftTransaction
 
 from .parsers.delistings import parse_delisting
 from .parsers.listings import parse_listing
@@ -17,35 +15,7 @@ from .parsers.transfers import parse_transfer
 # - Transfer
 
 
-def _handle_input(
-    transaction: Union[dict, Transaction, NFTTransaction], mint: str = None
-) -> Union[str, Transaction]:
-    if isinstance(transaction, dict):
-        logger.debug("Received transaction as dict")
-        if not mint:
-            msg = "Did not receive mint parameter, only got a transaction dictionary."
-            logger.error(msg)
-            raise AttributeError(msg)
-        transaction = Transaction(transaction=transaction, mint=mint)
-
-    if isinstance(transaction, NFTTransaction):
-        logger.debug("Received Transaction as NFTTransaction")
-        mint = transaction.mint
-    elif isinstance(transaction, Transaction):
-        logger.debug("Received Transaction as Transaction")
-        if mint is None:
-            msg = "Did not receive mint parameter, only got a transaction instance."
-            logger.error(msg)
-            raise AttributeError(msg)
-    else:
-        msg = f"Unkown transaction datatype {type(transaction)}"
-        logger.error(msg)
-        raise AttributeError(msg)
-
-    return transaction, mint
-
-
-def parse_transaction(transaction: Transaction) -> Activity:
+def parse_transaction(transaction: NftTransaction) -> Activity:
     logger.info(f"Parsing transaction {transaction.transaction_id}")
 
     to_check = {

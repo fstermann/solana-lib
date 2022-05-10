@@ -4,10 +4,10 @@ from solanalib.logger import logger
 from solanalib.nft.activities import DelistingActivity
 from solanalib.nft.instructions import Instruction
 from solanalib.nft.marketplaces import marketplaces
-from solanalib.nft.transaction import Transaction
+from solanalib.nft.nft_transaction import NftTransaction
 
 
-def parse_delisting_mev1(tx: Transaction) -> Union[DelistingActivity, None]:
+def parse_delisting_mev1(tx: NftTransaction) -> Union[DelistingActivity, None]:
     def parse_ix(ix: Instruction) -> Union[DelistingActivity, None]:
         marketplace = marketplaces.magic_eden_v1
 
@@ -42,7 +42,7 @@ def parse_delisting_mev1(tx: Transaction) -> Union[DelistingActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_delisting_mev2(tx: Transaction) -> Union[DelistingActivity, None]:
+def parse_delisting_mev2(tx: NftTransaction) -> Union[DelistingActivity, None]:
     def parse_ix(ix: Instruction) -> Union[DelistingActivity, None]:
         marketplace = marketplaces.magic_eden_v2
 
@@ -77,7 +77,7 @@ def parse_delisting_mev2(tx: Transaction) -> Union[DelistingActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_delisting(tx: Transaction):
+def parse_delisting(tx: NftTransaction):
     to_parse = {
         "MagicEdenV1": parse_delisting_mev1,
         "MagicEdenV2": parse_delisting_mev2,

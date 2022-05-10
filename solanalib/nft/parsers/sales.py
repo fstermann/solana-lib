@@ -4,11 +4,11 @@ from solanalib.logger import logger
 from solanalib.nft.activities import SaleActivity
 from solanalib.nft.instructions import Instruction
 from solanalib.nft.marketplaces import marketplaces
-from solanalib.nft.transaction import Transaction
+from solanalib.nft.nft_transaction import NftTransaction
 
 from .util import get_me_lamports_price_from_data
 
-# def parse_sale_unknown(tx: Transaction, mint: str) -> Union[SaleActivity, None]:
+# def parse_sale_unknown(tx: NftTransaction, mint: str) -> Union[SaleActivity, None]:
 #     transfer_activity = parse_transfer(tx=tx, mint=mint)
 #     if isinstance(transfer_activity, TransferActivity):
 #         buyer = transfer_activity.new_authority
@@ -57,7 +57,7 @@ from .util import get_me_lamports_price_from_data
 #     return None
 
 
-def parse_sale_mev1(tx: Transaction) -> Union[SaleActivity, None]:
+def parse_sale_mev1(tx: NftTransaction) -> Union[SaleActivity, None]:
     def parse_ix(ix: Instruction) -> Union[SaleActivity, None]:
         marketplace = marketplaces.magic_eden_v1
 
@@ -94,7 +94,7 @@ def parse_sale_mev1(tx: Transaction) -> Union[SaleActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_accept_bid_mev1(tx: Transaction) -> Union[SaleActivity, None]:
+def parse_accept_bid_mev1(tx: NftTransaction) -> Union[SaleActivity, None]:
     def parse_ix(ix: Instruction) -> Union[SaleActivity, None]:
         marketplace = marketplaces.magic_eden_v1
 
@@ -131,7 +131,7 @@ def parse_accept_bid_mev1(tx: Transaction) -> Union[SaleActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_sale_mev2(tx: Transaction) -> Union[SaleActivity, None]:
+def parse_sale_mev2(tx: NftTransaction) -> Union[SaleActivity, None]:
     def parse_ix(ix: Instruction) -> Union[SaleActivity, None]:
         marketplace = marketplaces.magic_eden_v2
 
@@ -170,16 +170,16 @@ def parse_sale_mev2(tx: Transaction) -> Union[SaleActivity, None]:
 
 
 # do
-def parse_sale_auction_house(tx: Transaction) -> Union[SaleActivity, None]:  # noqa
+def parse_sale_auction_house(tx: NftTransaction) -> Union[SaleActivity, None]:  # noqa
     return None
 
 
 # do see 3q3VzPrCXfjtXnspPaDb3S9L9wNoMBN9skgXzThDF1KDeaRiYmmtqGJZn2eQCMXMaZ2wAUQxR2Vmpsy6K7jf18gT
-def parse_sale_digital_eyes(tx: Transaction) -> Union[SaleActivity, None]:  # noqa
+def parse_sale_digital_eyes(tx: NftTransaction) -> Union[SaleActivity, None]:  # noqa
     return None
 
 
-def parse_sale(tx: Transaction) -> Union[SaleActivity, None]:
+def parse_sale(tx: NftTransaction) -> Union[SaleActivity, None]:
     to_parse = {
         "MagicEdenV1 Sale": parse_sale_mev1,
         "MagicEdenV1 AcceptBid": parse_accept_bid_mev1,

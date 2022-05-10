@@ -1,8 +1,8 @@
 from typing import List
 
 from .activities import Activity, ActivityType
+from .nft_transaction import NftTransaction
 from .parse import parse_transaction
-from .transaction import Transaction
 
 
 def sort_activities(activities: List[Activity]) -> List[Activity]:
@@ -16,7 +16,7 @@ def sort_activities(activities: List[Activity]) -> List[Activity]:
     return sorted_activities
 
 
-def sort_transactions(transactions: List[Transaction]) -> List[Transaction]:
+def sort_transactions(transactions: List[NftTransaction]) -> List[NftTransaction]:
     # Sort out duplicates
     unique_transactions = set(transactions)
 
@@ -36,6 +36,6 @@ def get_previous_token_account(activities: List[Activity]):
     return last_activity.old_token_account
 
 
-def parse_all_transactions(transactions: List[Transaction]) -> List[Activity]:
+def parse_all_transactions(transactions: List[NftTransaction]) -> List[Activity]:
     unique_transactions = sort_transactions(transactions)
     return [parse_transaction(transaction=tx) for tx in unique_transactions]

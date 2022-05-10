@@ -4,10 +4,10 @@ from solanalib.constants import Metaplex
 from solanalib.logger import logger
 from solanalib.nft.activities import MintActivity
 from solanalib.nft.instructions import Instruction
-from solanalib.nft.transaction import Transaction
+from solanalib.nft.nft_transaction import NftTransaction
 
 
-def parse_mint_other(tx: Transaction) -> Union[MintActivity, None]:
+def parse_mint_other(tx: NftTransaction) -> Union[MintActivity, None]:
     def parse_ix(ix: Instruction):
         if not ix.is_mint_ix:
             return None
@@ -31,7 +31,7 @@ def parse_mint_other(tx: Transaction) -> Union[MintActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_mint_candy_machine_v1(tx: Transaction) -> Union[MintActivity, None]:
+def parse_mint_candy_machine_v1(tx: NftTransaction) -> Union[MintActivity, None]:
     def parse_ix(ix: Instruction):
         if not ix.is_mint_ix:
             return None
@@ -58,7 +58,7 @@ def parse_mint_candy_machine_v1(tx: Transaction) -> Union[MintActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_mint_candy_machine_v2(tx: Transaction) -> Union[MintActivity, None]:
+def parse_mint_candy_machine_v2(tx: NftTransaction) -> Union[MintActivity, None]:
     def parse_ix(ix: Instruction):
         if not ix.is_mint_ix:
             return None
@@ -85,7 +85,7 @@ def parse_mint_candy_machine_v2(tx: Transaction) -> Union[MintActivity, None]:
     return tx.parse_ixs(parse_ix)
 
 
-def parse_mint(tx: Transaction) -> Union[MintActivity, None]:
+def parse_mint(tx: NftTransaction) -> Union[MintActivity, None]:
     to_parse = {
         "CandyMachineV1": parse_mint_candy_machine_v1,
         "CandyMachineV2": parse_mint_candy_machine_v2,

@@ -7,12 +7,12 @@ from solanalib.logger import logger
 from solanalib.nft.accounts import AccountInfo
 from solanalib.nft.activities import TransferActivity
 from solanalib.nft.instructions import InnerInstruction, Instruction, OuterInstruction
-from solanalib.nft.transaction import Transaction
+from solanalib.nft.nft_transaction import NftTransaction
 from solanalib.rpc.client import Client
 
 
 def get_create_instruction_for_account(
-    tx: Transaction, account: str, mint: str
+    tx: NftTransaction, account: str, mint: str
 ) -> Union[OuterInstruction, InnerInstruction, None]:
     for index, ix in enumerate(tx.instructions.outer):
         if (ix.is_create_associate_account_for_mint(mint)) and ix.info[
@@ -31,7 +31,7 @@ def get_create_instruction_for_account(
 
 
 def get_init_instruction_for_account(
-    tx: Transaction, account: str, mint: str
+    tx: NftTransaction, account: str, mint: str
 ) -> Union[OuterInstruction, InnerInstruction, None]:
     for index, ix in enumerate(tx.instructions.outer):
         if (ix.is_initialize_account_for_mint(mint)) and ix.info["account"] == account:
@@ -48,7 +48,7 @@ def get_init_instruction_for_account(
 
 
 def get_close_instruction_for_account(
-    tx: Transaction, account: str
+    tx: NftTransaction, account: str
 ) -> Union[OuterInstruction, InnerInstruction, None]:
     for index, ix in enumerate(tx.instructions.outer):
         if ix.is_close_account(account):
@@ -64,7 +64,7 @@ def get_close_instruction_for_account(
 
 
 def get_setAuthority_instructions_for_account(
-    tx: Transaction, account: str
+    tx: NftTransaction, account: str
 ) -> List[Instruction]:
     ixs = []
 
@@ -84,7 +84,7 @@ def get_setAuthority_instructions_for_account(
 def check_mint(
     mint: str,
     ix: Instruction,
-    tx: Transaction,
+    tx: NftTransaction,
     new_token_account: str,
     new_authority: str,
 ):
@@ -151,7 +151,7 @@ def is_owner_of_account(owner: str, token_account: str, mint: str) -> bool:
 
 
 def get_initial_authority_of_token_account(
-    new_token_account: str, tx: Transaction, mint: str
+    new_token_account: str, tx: NftTransaction, mint: str
 ):
     # Check for create account ix
     create_ix = get_create_instruction_for_account(
@@ -179,7 +179,7 @@ def get_initial_authority_of_token_account(
 
 
 def get_new_authority_of_token_account(
-    new_token_account: str, tx: Transaction, mint: str
+    new_token_account: str, tx: NftTransaction, mint: str
 ):
     logger.debug(
         f"[NEW AUTH] Checking new authority for token account {new_token_account}"
@@ -209,7 +209,7 @@ def get_new_authority_of_token_account(
 
 
 def get_old_authority_of_token_account(
-    old_token_account: str, transfer_ix: Instruction, tx: Transaction, mint: str
+    old_token_account: str, transfer_ix: Instruction, tx: NftTransaction, mint: str
 ):
     logger.debug(
         f"[OLD AUTH] Checking old authority for token account {old_token_account}"
@@ -242,7 +242,7 @@ def get_old_authority_of_token_account(
 
 
 def parse_transfer_ix(
-    ix: Instruction, tx: Transaction, mint: str
+    ix: Instruction, tx: NftTransaction, mint: str
 ) -> Union[TransferActivity, None]:
     if not ix.is_spl_token_transfer():
         return None
@@ -283,7 +283,7 @@ def parse_transfer_ix(
 
 
 def parse_transfer_type_transfer(
-    tx: Transaction, mint: str
+    tx: NftTransaction, mint: str
 ) -> Union[TransferActivity, None]:
 
     transfers = []
@@ -330,7 +330,7 @@ def parse_transfer_type_transfer(
 
 
 def parse_transfer_type_transferChecked(
-    tx: Transaction, mint: str
+    tx: NftTransaction, mint: str
 ) -> Union[TransferActivity, None]:
     for ix in tx.instructions.outer:
         if ix.is_spl_token_checked_transfer() and ix.info["mint"] == mint:
@@ -358,7 +358,7 @@ def parse_transfer_type_transferChecked(
     return None
 
 
-def parse_transfer(tx: Transaction, mint: str) -> Union[TransferActivity, None]:
+def parse_transfer(tx: NftTransaction, mint: str) -> Union[TransferActivity, None]:
     to_parse = {
         "transferChecked": parse_transfer_type_transferChecked,
         "transfer": parse_transfer_type_transfer,
