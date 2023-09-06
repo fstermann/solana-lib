@@ -57,7 +57,7 @@ pyrsistent==0.18.1
     # via jsonschema
 ratelimit==2.2.1
     # via -r common.in
-requests==2.27.1
+requests==2.31.0
     # via
     #   -r common.in
     #   solana
