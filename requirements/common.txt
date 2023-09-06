@@ -11,12 +11,12 @@ apischema==0.16.6
 attrs==21.4.0
     # via jsonschema
 base58==2.1.1
-    # via -r requirements/common.in
+    # via -r common.in
 based58==0.1.1
     # via solana
 cachetools==4.2.4
     # via solana
-certifi==2021.10.8
+certifi==2023.7.22
     # via
     #   httpx
     #   requests
@@ -39,8 +39,6 @@ idna==3.3
     #   anyio
     #   requests
     #   rfc3986
-importlib-resources==5.7.1
-    # via jsonschema
 jsonrpcclient==4.0.2
     # via solana
 jsonrpcserver==5.0.7
@@ -52,16 +50,16 @@ oslash==0.6.3
 pycparser==2.21
     # via cffi
 pydantic==1.9.0
-    # via -r requirements/common.in
+    # via -r common.in
 pynacl==1.5.0
     # via solana
 pyrsistent==0.18.1
     # via jsonschema
 ratelimit==2.2.1
-    # via -r requirements/common.in
+    # via -r common.in
 requests==2.27.1
     # via
-    #   -r requirements/common.in
+    #   -r common.in
     #   solana
 rfc3986[idna2008]==1.5.0
     # via httpx
@@ -71,11 +69,11 @@ sniffio==1.2.0
     #   httpcore
     #   httpx
 solana==0.23.3
-    # via -r requirements/common.in
+    # via -r common.in
 types-cachetools==4.2.10
     # via solana
 types-requests==2.27.25
-    # via -r requirements/common.in
+    # via -r common.in
 types-urllib3==1.26.14
     # via types-requests
 typing-extensions==4.2.0
@@ -87,5 +85,3 @@ urllib3==1.26.9
     # via requests
 websockets==10.3
     # via solana
-zipp==3.8.0
-    # via importlib-resources
